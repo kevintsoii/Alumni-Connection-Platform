@@ -8,11 +8,13 @@ CS 157A Final Project
 
    - [Docker](https://www.docker.com/)
 
-2. Run Docker & wait for the build to finish
+2. Run Docker
 
    ```
    docker-compose up --build
    ```
+
+   - When the build finishes, it should say `django-1  | Watching for file changes with StatReloader`
 
 3. Visit the website at http://localhost:5173/
 
