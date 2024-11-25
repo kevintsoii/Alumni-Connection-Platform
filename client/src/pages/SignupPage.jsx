@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import NavBar from '../components/NavBar';
+
 
 const SignupPage = () => {
   const currentYear = new Date().getFullYear();
@@ -43,7 +45,9 @@ const SignupPage = () => {
     : Array.from({ length: currentYear - 1900 + 1 }, (_, index) => (1900 + index).toString());
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
+      <NavBar />
+      <main className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Sign Up</h2>
 
@@ -207,6 +211,7 @@ const SignupPage = () => {
           Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
         </p>
       </div>
+      </main>
     </div>
   );
 };

@@ -8,10 +8,11 @@ import SignupPage from './pages/SignupPage';
 function App() {
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* <HomePage /> */}
+       <HomePage />
+       {/* <ActivityWall /> */}
       {/* <LoginPage /> */}
-      <SignupPage />
-    </div>
+      {/* <SignupPage /> */}
+  </div>
   );
 }
 
