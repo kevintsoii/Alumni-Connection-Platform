@@ -5,7 +5,6 @@ function Home() {
   return (
     
     <div className="min-h-screen">
-      <NavBar />
       <main className="flex flex-col space-y-6 items-center pt-44 pb-10">
         <h1 className='text-7xl font-bold text-amber-400 text-center'> 
             Spartans 

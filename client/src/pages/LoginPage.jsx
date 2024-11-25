@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import NavBar from '../components/NavBar';
-
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +19,6 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <NavBar />
       <main className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-9 rounded-lg shadow-lg w-full max-w-sm">
           <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Login</h2>

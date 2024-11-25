@@ -1,7 +1,6 @@
 import React from 'react';
 import logo from '../assets/spartan-logo.png';
 import profilePic from '../assets/profile-pic.png';
-
 function Navbar() {
   return (
     <nav className="bg-blue-600 p-4">
@@ -21,6 +20,4 @@ function Navbar() {
     </nav>
   );
 }
-
 export default Navbar;
-
