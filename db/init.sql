@@ -126,9 +126,9 @@ BEGIN
     IF (SELECT COUNT(*) FROM User) = 0 THEN
         INSERT INTO User (email, password, first, last, major, degree, gradMonth, gradYear, type, department, title)
         VALUES
-        ('student@sjsu.edu', 'password1', 'John', 'Doe', 'Computer Science', 'BS', 5, 2027, 'student', NULL, NULL),
-        ('alumni@sjsu.edu', 'password2', 'Alice', 'Smith', 'Economics', 'MS', 5, 2023, 'alumni', NULL, NULL),
-        ('staff@sjsu.edu', 'password3', 'Bob', 'Jones', 'Mathematics', 'PhD', 6, 2005, 'staff', 'Science', 'Researcher');
+        ('student@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'John', 'Doe', 'Computer Science', 'BS', 5, 2027, 'student', NULL, NULL),
+        ('alumni@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Alice', 'Smith', 'Economics', 'MS', 5, 2023, 'alumni', NULL, NULL),
+        ('staff@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Bob', 'Jones', 'Mathematics', 'PhD', 6, 2005, 'staff', 'Science', 'Researcher');
     END IF;
 
     IF (SELECT COUNT(*) FROM Connection) = 0 THEN
