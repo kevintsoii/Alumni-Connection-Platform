@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Jobs() {
+function JobsPage() {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h1 className="text-2xl font-bold mb-4">Jobs</h1>
@@ -9,5 +9,5 @@ function Jobs() {
   );
 }
 
-export default Jobs;
+export default JobsPage;
 

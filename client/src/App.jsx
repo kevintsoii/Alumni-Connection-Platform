@@ -4,6 +4,10 @@ import ActivityWall from "./components/ActivityWall";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import JobsPage from "./pages/Jobs";
+import EventsPage from "./pages/Events";
+import FundraisersPage from "./pages/Fundraisers";
+
 
 function App() {
   return (
@@ -16,6 +20,9 @@ function App() {
             <Route path="/posts" element={<ActivityWall />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/jobs" element={<JobsPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/fundraisers" element={<FundraisersPage />} />
           </Routes>
         </main>
       </div>
