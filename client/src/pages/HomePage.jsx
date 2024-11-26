@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 
 function Home() {
@@ -16,9 +17,11 @@ function Home() {
             <span className='text-3xl font-bold text-amber-400'> Spartan </span>
             at a time.
         </div>
-        <div className='pt-6'>
-            <button className='text-xl bg-blue-600 hover:bg-blue-800 text-white font-bold py-4 px-6 rounded-full duration-500 '>Get Started</button>
-        </div>
+          <Link to="/signup">
+            <button className="text-xl bg-blue-600 hover:bg-blue-800 text-white font-bold py-4 px-6 rounded-full duration-500">
+              Get Started
+            </button>
+          </Link>
       </main>
     </div>
   );

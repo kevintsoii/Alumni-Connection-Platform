@@ -1,4 +1,5 @@
 import profilePic from "../assets/profile-pic.png";
+import UserProfile from '../components/UserProfile';
 
 function ActivityWall() {
   const activities = [
