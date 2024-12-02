@@ -7,6 +7,8 @@ import SignupPage from "./pages/SignupPage";
 import JobsPage from "./pages/Jobs";
 import EventsPage from "./pages/Events";
 import FundraisersPage from "./pages/Fundraisers";
+import AlumnisPage from "./pages/Alumnis";
+
 
 
 function App() {
@@ -23,6 +25,7 @@ function App() {
             <Route path="/jobs" element={<JobsPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/fundraisers" element={<FundraisersPage />} />
+            <Route path="/alumnis" element={<AlumnisPage />} />
           </Routes>
         </main>
       </div>
