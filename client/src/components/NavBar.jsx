@@ -33,11 +33,13 @@ function NavBar() {
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
-            <img
-              src={profilePic}
-              alt="Profile"
-              className="h-8 w-8 rounded-full"
-            />
+            <a href="/profile">
+              <img
+                src={profilePic}
+                alt="Profile"
+                className="h-8 w-8 rounded-full"
+              />
+            </a>
           </div>
         </div>
       </div>

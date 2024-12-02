@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Profile() {
+  const [isPending, setIsPending] = useState(false);
+  function connectWith() {
+    console.log("Connecting with user");
+  }
+
   return (
     <div className=" ">
       <div className="rounded-lg max-w-3xl bg-white"></div>
@@ -17,11 +22,19 @@ function Profile() {
 
         <div>
           <p className="font-extrabold text-3xl tracking-tighter"> Name</p>
-          <p className="text-lg">Bio</p>
-          <p className="text-sm text-gray-400">Location</p>
+          <p className="text-lg">Major</p>
+          <p className="text-sm text-gray-400">Graduation Month & Year</p>
         </div>
 
-        <button className="w-24 h-8 rounded-2xl bg-blue-500">Connect</button>
+        <button
+          onClick={connectWith()}
+          className={`w-24 h-8 rounded-2xl ${
+            isPending ? "bg-gray-500" : "bg-blue-500"
+          }`}
+          diabled={isPending}
+        >
+          Connect
+        </button>
       </div>
     </div>
   );
