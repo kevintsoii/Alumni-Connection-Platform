@@ -2,6 +2,10 @@
 
 CS 157A Final Project
 
+Project Report: [ProjectReport.md](https://github.com/kevintsoii/Alumni-Connection-Platform/blob/main/ProjectReport.md)
+
+Meeting Minutes: [meetingMinutes.md](https://github.com/kevintsoii/Alumni-Connection-Platform/blob/main/meetingMinutes.md)
+
 ## Set Up
 
 1. Install prerequisites
@@ -26,7 +30,7 @@ CS 157A Final Project
 
 ## Division of Work
 
-- Kevin:
+- Kevin: 
 - Huy:
 - Samson:
 - Marvin:
