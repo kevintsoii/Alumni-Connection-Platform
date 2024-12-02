@@ -7,7 +7,7 @@ import SignupPage from "./pages/SignupPage";
 import JobsPage from "./pages/Jobs";
 import EventsPage from "./pages/Events";
 import FundraisersPage from "./pages/Fundraisers";
-
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
             <Route path="/jobs" element={<JobsPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/fundraisers" element={<FundraisersPage />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
       </div>

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import logo from '../assets/spartan-logo.png';
-import profilePic from '../assets/profile-pic.png';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import logo from "../assets/spartan-logo.png";
+import profilePic from "/profilepic.png";
 
 function NavBar() {
   const location = useLocation();
@@ -15,14 +15,29 @@ function NavBar() {
               <img src={logo} alt="Spartan Outreach Logo" className="h-8 w-8" />
             </Link>
             <div className="ml-10 flex items-baseline space-x-4">
-              <NavLink to="/" active={location.pathname === "/"}>Home</NavLink>
-              <NavLink to="/jobs" active={location.pathname === "/jobs"}>Jobs</NavLink>
-              <NavLink to="/events" active={location.pathname === "/events"}>Events</NavLink>
-              <NavLink to="/fundraisers" active={location.pathname === "/fundraisers"}>Fundraisers</NavLink>
+              <NavLink to="/" active={location.pathname === "/"}>
+                Home
+              </NavLink>
+              <NavLink to="/jobs" active={location.pathname === "/jobs"}>
+                Jobs
+              </NavLink>
+              <NavLink to="/events" active={location.pathname === "/events"}>
+                Events
+              </NavLink>
+              <NavLink
+                to="/fundraisers"
+                active={location.pathname === "/fundraisers"}
+              >
+                Fundraisers
+              </NavLink>
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
-            <img src={profilePic} alt="Profile" className="h-8 w-8 rounded-full" />
+            <img
+              src={profilePic}
+              alt="Profile"
+              className="h-8 w-8 rounded-full"
+            />
           </div>
         </div>
       </div>
@@ -36,8 +51,8 @@ function NavLink({ to, children, active }) {
       to={to}
       className={`px-3 py-2 rounded-md text-sm font-medium ${
         active
-          ? 'text-blue-600 border-b-2 border-blue-600'
-          : 'text-gray-600 hover:text-gray-900'
+          ? "text-blue-600 border-b-2 border-blue-600"
+          : "text-gray-600 hover:text-gray-900"
       }`}
     >
       {children}
@@ -46,4 +61,3 @@ function NavLink({ to, children, active }) {
 }
 
 export default NavBar;
-
