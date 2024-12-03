@@ -1,4 +1,5 @@
-import profilePic from "../assets/profile-pic.png";
+import profilePic from "/profilepic.png";
+import UserProfile from "../components/UserProfile";
 import { useState } from "react";
 
 function ActivityWall() {
@@ -41,7 +42,9 @@ function ActivityWall() {
         activity.id === id
           ? {
               ...activity,
-              likes: activity.likedByUser ? activity.likes - 1 : activity.likes + 1,
+              likes: activity.likedByUser
+                ? activity.likes - 1
+                : activity.likes + 1,
               likedByUser: !activity.likedByUser,
             }
           : activity

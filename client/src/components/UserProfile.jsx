@@ -1,12 +1,16 @@
-import React from 'react';
-import profilePic from '../assets/profile-pic.png';
+import React from "react";
+import profilePic from "/profilepic.png";
 
 function UserProfile() {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="h-24 bg-gray-300"></div>
       <div className="p-4">
-        <img src={profilePic} alt="User" className="w-24 h-24 rounded-full border-4 border-white -mt-12 mb-4" />
+        <img
+          src={profilePic}
+          alt="User"
+          className="w-24 h-24 rounded-full border-4 border-white -mt-12 mb-4"
+        />
         <h2 className="text-xl font-bold">John Doe</h2>
         <p className="text-gray-600">Student at San Jose State University</p>
         <div className="mt-4 border-t pt-4">
@@ -25,4 +29,3 @@ function UserProfile() {
 }
 
 export default UserProfile;
-
