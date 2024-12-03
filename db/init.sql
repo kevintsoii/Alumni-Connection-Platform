@@ -125,6 +125,8 @@ CREATE TABLE IF NOT EXISTS JobPosting (
     FOREIGN KEY (creator) REFERENCES User(userID) ON DELETE CASCADE
 );
 
+CREATE INDEX idx_job_title ON JobPosting(title);
+
 DELIMITER //
 
 CREATE PROCEDURE PopulateInitialData()

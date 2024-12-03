@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from django.db import connection
+from django.db import connection, transaction
 from django.utils.decorators import method_decorator
 
 SECRET_KEY = "DEVELOPMENT"
@@ -226,18 +226,31 @@ class AlumniView(APIView):
         data = json.loads(request.body)
         company = data.get("company")
         industry = data.get("industry")
+        contacts = data.get("contacts", [])
         user = request.session["id"]
 
-        if not company or not industry:
-            return Response({"error": "Missing required fields"}, status=400)
+        if not company or not industry or len(contacts) > 3:
+            return Response({"error": "Field validation error"}, status=400)
 
         try:
             with connection.cursor() as cursor:
+                cursor.execute("BEGIN;")
+
                 cursor.execute("""
                     INSERT INTO AlumniWall (user, company, industry)
                     VALUES (%s, %s, %s)
                 """, [user, company, industry])
+
+                for url in contacts:
+                    cursor.execute("""
+                        INSERT INTO AlumniContact (user, url)
+                        VALUES (%s, %s)
+                    """, [user, url])
+
+                cursor.execute("COMMIT;")
         except Exception as e:
+            with connection.cursor() as cursor:
+                cursor.execute("ROLLBACK;")
             return Response({"error": str(e)}, status=500)
         
         return Response({"message": "Added to alumni wall!"})
@@ -271,27 +284,6 @@ class AlumniView(APIView):
 
         return JsonResponse({"alumni": alumni}, status=200)
 
-@api_view(['POST'])
-@auth_middleware(required_permission_level='alumni')
-def contacts_view(request):
-    data = json.loads(request.body)
-    url = data.get("url")
-    user = request.session["id"]
-
-    if not url:
-        return Response({"error": "Missing required fields"}, status=400)
-
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                INSERT INTO AlumniContact (user, url)
-                VALUES (%s, %s)
-            """, [user, url])
-    except Exception as e:
-        return Response({"error": str(e)}, status=500)
-    
-    return Response({"message": "Added to contacts!"})
-
 @api_view(['GET'])
 @auth_middleware()
 def contact_view(request, id):
@@ -316,18 +308,32 @@ class PostView(APIView):
         data = json.loads(request.body)
         title = data.get("title")
         text = data.get("text")
+        medias = contacts = data.get("medias", [])
         user = request.session["id"]
 
-        if not title or not text:
-            return Response({"error": "Missing required fields"}, status=400)
+        if not title or not text or len(medias) > 3:
+            return Response({"error": "Error validating fields"}, status=400)
 
         try:
             with connection.cursor() as cursor:
+                cursor.execute("BEGIN;")
+
                 cursor.execute("""
                     INSERT INTO Post (user, title, text)
                     VALUES (%s, %s, %s)
                 """, [user, title, text])
+                post = cursor.lastrowid
+
+                for url, type in medias:
+                    cursor.execute("""
+                        INSERT INTO Media (post, URL, type)
+                        VALUES (%s, %s, %s)
+                    """, [post, url, type])
+
+                cursor.execute("COMMIT;")
         except Exception as e:
+            with connection.cursor() as cursor:
+                cursor.execute("ROLLBACK;")
             return Response({"error": str(e)}, status=500)
         
         return Response({"message": "Added to posts!"})
@@ -355,40 +361,6 @@ class PostView(APIView):
         ]
 
         return JsonResponse({"posts": posts}, status=200)
-
-@api_view(['POST'])
-@auth_middleware()
-def medias_view(request):
-    data = json.loads(request.body)
-    post = data.get("post")
-    url = data.get("url")
-    media_type = data.get("type", "url")
-    user = request.session["id"]
-
-    if not post or not url:
-        return Response({"error": "Missing required fields"}, status=400)
-    
-    with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT user
-            FROM Post
-            WHERE postID = %s
-        """, [post])
-        row = cursor.fetchone()
-
-    if not row or row[0] != user:
-        return Response({"error": "Cannot add media to someone else's post"}, status=403)
-    
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                INSERT INTO Media (post, URL, type)
-                VALUES (%s, %s, %s)
-            """, [post, url, media_type])
-    except Exception as e:
-        return Response({"error": str(e)}, status=500)
-    
-    return Response({"message": "Added to media!"})
 
 @api_view(['GET'])
 @auth_middleware()

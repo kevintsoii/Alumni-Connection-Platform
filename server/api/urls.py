@@ -13,11 +13,9 @@ urlpatterns = [
     path('connections/<int:id>/', ConnectionView.as_view(), name='connection'),
 
     path('alumni/', AlumniView.as_view(), name='alumni'),
-    path('contacts/', contacts_view, name='add contact'),
     path('contacts/<int:id>/', contact_view, name='get contacts'),
 
     path('posts/', PostView.as_view(), name='get contacts'),
-    path('media/', medias_view, name='add media'),
     path('media/<int:id>/', media_view, name='get media'),
 
     path('likes/<int:id>/', like_view, name='add like'),
