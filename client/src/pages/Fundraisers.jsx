@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function FundraisersPage() {
+  const [userType, setUserType] = useState("staff");
+
   const [fundraisers, setFundraisers] = useState([
     {
       id: 1,
       name: "Community Center Renovation",
-      goal: 5000.00,
-      description: "Help us renovate our community center to provide better services to our neighborhood!",
+      goal: 5000.0,
+      description:
+        "Help us renovate our community center to provide better services to our neighborhood!",
       ends: "2024-12-31",
       donations: [
         { user: "Alice", amount: 100 },
@@ -16,8 +19,9 @@ function FundraisersPage() {
     {
       id: 2,
       name: "School Supplies for Kids",
-      goal: 3000.00,
-      description: "We are raising funds to provide school supplies to underprivileged children.",
+      goal: 3000.0,
+      description:
+        "We are raising funds to provide school supplies to underprivileged children.",
       ends: "2024-11-30",
       donations: [
         { user: "Charlie", amount: 150 },
@@ -76,37 +80,47 @@ function FundraisersPage() {
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-4">Fundraisers</h1>
+  function renderNewFundraiserForm() {
+    if (userType === "staff") {
+      return (
         <div className="flex items-center space-x-4 mb-4">
           <input
             type="text"
             placeholder="Fundraiser Name"
             value={newFundraiser.name}
-            onChange={(e) => setNewFundraiser({ ...newFundraiser, name: e.target.value })}
+            onChange={(e) =>
+              setNewFundraiser({ ...newFundraiser, name: e.target.value })
+            }
             className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="text"
             placeholder="Goal Amount"
             value={newFundraiser.goal}
-            onChange={(e) => setNewFundraiser({ ...newFundraiser, goal: e.target.value })}
+            onChange={(e) =>
+              setNewFundraiser({ ...newFundraiser, goal: e.target.value })
+            }
             className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="text"
             placeholder="Fundraiser Description"
             value={newFundraiser.description}
-            onChange={(e) => setNewFundraiser({ ...newFundraiser, description: e.target.value })}
+            onChange={(e) =>
+              setNewFundraiser({
+                ...newFundraiser,
+                description: e.target.value,
+              })
+            }
             className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="date"
             placeholder="End Date"
             value={newFundraiser.ends}
-            onChange={(e) => setNewFundraiser({ ...newFundraiser, ends: e.target.value })}
+            onChange={(e) =>
+              setNewFundraiser({ ...newFundraiser, ends: e.target.value })
+            }
             className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
@@ -116,10 +130,25 @@ function FundraisersPage() {
             Add Fundraiser
           </button>
         </div>
+      );
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-bold mb-4">Fundraisers</h1>
+        {renderNewFundraiserForm()}
+
         {fundraisers.map((fundraiser) => (
-          <div key={fundraiser.id} className="bg-white rounded-lg shadow-md p-4 mt-4">
+          <div
+            key={fundraiser.id}
+            className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
+          >
             <h3 className="font-semibold text-xl">{fundraiser.name}</h3>
-            <p className="text-gray-500 mt-2">Goal: ${fundraiser.goal.toFixed(2)}</p>
+            <p className="text-gray-500 mt-2">
+              Goal: ${fundraiser.goal.toFixed(2)}
+            </p>
             <p className="text-gray-500">{fundraiser.description}</p>
             <p className="text-gray-500">Ends: {fundraiser.ends}</p>
             <div className="mt-4">

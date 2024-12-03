@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
 
 function Profile() {
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJwZXJtaXNzaW9uX2xldmVsIjoic3R1ZGVudCIsImV4cCI6MTczMzM1MTI2MywiaWF0IjoxNzMzMjY0ODYzfQ.2C6spMiKiHbwe3j39lPjvzJLiUWEBDfiK0tPWVidvMk";
+  // const token =
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJwZXJtaXNzaW9uX2xldmVsIjoic3R1ZGVudCIsImV4cCI6MTczMzM1MTI2MywiaWF0IjoxNzMzMjY0ODYzfQ.2C6spMiKiHbwe3j39lPjvzJLiUWEBDfiK0tPWVidvMk";
 
-  useEffect(() => {
-    const fetchProtectedData = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/alumni/", {
-          method: "GET",
-          mode: "no-cors",
-          headers: { Authorization: `${token}` },
-          credentials: "include", // Include cookies in the request
-        });
-        const data = await response.json();
-        console.log("Protected data:", data);
-      } catch (error) {
-        console.error("Error fetching protected data:", error);
-      }
-    };
-    fetchProtectedData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchProtectedData = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:8000/alumni/", {
+  //         method: "GET",
+  //         mode: "no-cors",
+  //         headers: { Authorization: `${token}` },
+  //         credentials: "include", // Include cookies in the request
+  //       });
+  //       const data = await response.json();
+  //       console.log("Protected data:", data);
+  //     } catch (error) {
+  //       console.error("Error fetching protected data:", error);
+  //     }
+  //   };
+  //   fetchProtectedData();
+  // }, []);
 
   const [name, setName] = useState("Kevin Tsoi");
 

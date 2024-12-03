@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function EventsPage() {
+  const [userType, setUserType] = useState("staff");
   const [events, setEvents] = useState([
     {
       id: 1,
@@ -10,7 +11,8 @@ function EventsPage() {
       city: "Tech City",
       state: "CA",
       ZIP: "90001",
-      description: "A meetup for tech enthusiasts to discuss the latest in technology.",
+      description:
+        "A meetup for tech enthusiasts to discuss the latest in technology.",
       rsvps: ["Alice", "Bob"],
     },
     {
@@ -77,10 +79,9 @@ function EventsPage() {
     );
   };
 
-  return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-4">Events</h1>
+  function renderNewEventForm() {
+    if (userType === "staff") {
+      return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
           <input
             type="text"
@@ -93,14 +94,18 @@ function EventsPage() {
             type="datetime-local"
             placeholder="Event Date & Time"
             value={newEvent.timestamp}
-            onChange={(e) => setNewEvent({ ...newEvent, timestamp: e.target.value })}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, timestamp: e.target.value })
+            }
             className="bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="text"
             placeholder="Street Address"
             value={newEvent.street}
-            onChange={(e) => setNewEvent({ ...newEvent, street: e.target.value })}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, street: e.target.value })
+            }
             className="bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
@@ -114,7 +119,9 @@ function EventsPage() {
             type="text"
             placeholder="State"
             value={newEvent.state}
-            onChange={(e) => setNewEvent({ ...newEvent, state: e.target.value })}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, state: e.target.value })
+            }
             className="bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
@@ -128,7 +135,9 @@ function EventsPage() {
             type="text"
             placeholder="Event Description"
             value={newEvent.description}
-            onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, description: e.target.value })
+            }
             className="bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
@@ -138,11 +147,25 @@ function EventsPage() {
             Add Event
           </button>
         </div>
+      );
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-bold mb-4">Events</h1>
+        {renderNewEventForm()}
         {events.map((event) => (
-          <div key={event.id} className="bg-white rounded-lg shadow-md p-4 mt-4">
+          <div
+            key={event.id}
+            className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
+          >
             <h3 className="font-semibold text-xl">{event.name}</h3>
             <p className="text-gray-500 mt-2">Date & Time: {event.timestamp}</p>
-            <p className="text-gray-500">Location: {event.street}, {event.city}, {event.state}, {event.ZIP}</p>
+            <p className="text-gray-500">
+              Location: {event.street}, {event.city}, {event.state}, {event.ZIP}
+            </p>
             <p className="text-gray-500">{event.description}</p>
             <div className="mt-4">
               <button
