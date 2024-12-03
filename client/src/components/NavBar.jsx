@@ -30,6 +30,12 @@ function NavBar() {
               >
                 Fundraisers
               </NavLink>
+              <NavLink to="/" active={location.pathname === "/"}>Home</NavLink>
+              <NavLink to="/jobs" active={location.pathname === "/jobs"}>Jobs</NavLink>
+              <NavLink to="/events" active={location.pathname === "/events"}>Events</NavLink>
+              <NavLink to="/fundraisers" active={location.pathname === "/fundraisers"}>Fundraisers</NavLink>
+              <NavLink to="/alumnis" active={location.pathname === "/alumnis"}>Alumnis</NavLink>
+
             </div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">

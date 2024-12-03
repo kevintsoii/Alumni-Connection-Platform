@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS User (
     title VARCHAR(100)
 );
 
+CREATE INDEX idx_user_grad_year ON User(gradYear);
+CREATE INDEX idx_user_major ON User(major);
+
 CREATE TABLE IF NOT EXISTS Connection (
     user1 INT,
     user2 INT,
@@ -28,6 +31,9 @@ CREATE TABLE IF NOT EXISTS AlumniWall (
     FOREIGN KEY (user) REFERENCES User(userID) ON DELETE CASCADE
 );
 
+CREATE INDEX idx_alumniwall_company ON AlumniWall(company);
+CREATE INDEX idx_alumniwall_industry ON AlumniWall(industry);
+
 CREATE TABLE IF NOT EXISTS AlumniContact (
     user INT,
     url VARCHAR(255),
@@ -42,6 +48,8 @@ CREATE TABLE IF NOT EXISTS Post (
     text TEXT,
     FOREIGN KEY (user) REFERENCES User(userID) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_post_title ON Post(title);
 
 CREATE TABLE IF NOT EXISTS Media (
     post INT,
@@ -116,6 +124,8 @@ CREATE TABLE IF NOT EXISTS JobPosting (
     title VARCHAR(255) NOT NULL,
     FOREIGN KEY (creator) REFERENCES User(userID) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_job_title ON JobPosting(title);
 
 DELIMITER //
 

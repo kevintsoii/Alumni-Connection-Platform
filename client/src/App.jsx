@@ -8,6 +8,9 @@ import JobsPage from "./pages/Jobs";
 import EventsPage from "./pages/Events";
 import FundraisersPage from "./pages/Fundraisers";
 import Profile from "./pages/Profile";
+import AlumnisPage from "./pages/Alumnis";
+
+
 
 function App() {
   return (
@@ -24,6 +27,7 @@ function App() {
             <Route path="/events" element={<EventsPage />} />
             <Route path="/fundraisers" element={<FundraisersPage />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/alumnis" element={<AlumnisPage />} />
           </Routes>
         </main>
       </div>
