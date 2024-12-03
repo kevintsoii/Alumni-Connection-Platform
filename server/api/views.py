@@ -69,7 +69,6 @@ def login_view(request):
     payload = {
         "user_id": user_id,
         "permission_level": permission_level,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),  # Token expires in 1 day
         "iat": datetime.datetime.utcnow(),  # Issued at
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
@@ -111,7 +110,6 @@ def register_view(request):
     payload = {
         "user_id": user_id,
         "permission_level": type,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),  # Token expires in 1 day
         "iat": datetime.datetime.utcnow(),  # Issued at
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")

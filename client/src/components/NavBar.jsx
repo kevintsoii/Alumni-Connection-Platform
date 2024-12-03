@@ -1,10 +1,22 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/spartan-logo.png";
 import profilePic from "/profilepic.png";
 
 function NavBar() {
   const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, [localStorage.getItem("token")]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("permission_level");
+    setIsLoggedIn(false);
+  };
 
   return (
     <nav className="bg-blue-300 border-b border-gray-300 sticky top-0 z-10">
@@ -30,15 +42,13 @@ function NavBar() {
               >
                 Fundraisers
               </NavLink>
-              <NavLink to="/" active={location.pathname === "/"}>Home</NavLink>
-              <NavLink to="/jobs" active={location.pathname === "/jobs"}>Jobs</NavLink>
-              <NavLink to="/events" active={location.pathname === "/events"}>Events</NavLink>
-              <NavLink to="/fundraisers" active={location.pathname === "/fundraisers"}>Fundraisers</NavLink>
-              <NavLink to="/alumnis" active={location.pathname === "/alumnis"}>Alumnis</NavLink>
-
+              <NavLink to="/alumni" active={location.pathname === "/alumni"}>
+                Alumni
+              </NavLink>
             </div>
           </div>
-          <div className="ml-4 flex items-center md:ml-6">
+
+          <div className="ml-4 flex items-center md:ml-6 gap-3">
             <a href="/profile">
               <img
                 src={profilePic}
@@ -46,6 +56,12 @@ function NavBar() {
                 className="h-8 w-8 rounded-full"
               />
             </a>
+
+            {isLoggedIn ? (
+              <button onClick={handleLogout}>Logout</button>
+            ) : (
+              <Link to="/login">Login</Link>
+            )}
           </div>
         </div>
       </div>
