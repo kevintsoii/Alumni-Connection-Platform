@@ -1,16 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Profile() {
-  const userTypes = ["student", "alumni", "faculty"];
-  const [userType, setUserType] = useState("alumni");
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJwZXJtaXNzaW9uX2xldmVsIjoic3R1ZGVudCIsImV4cCI6MTczMzM1MTI2MywiaWF0IjoxNzMzMjY0ODYzfQ.2C6spMiKiHbwe3j39lPjvzJLiUWEBDfiK0tPWVidvMk";
+
+  useEffect(() => {
+    const fetchProtectedData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/alumni/", {
+          method: "GET",
+          mode: "no-cors",
+          headers: { Authorization: `${token}` },
+          credentials: "include", // Include cookies in the request
+        });
+        const data = await response.json();
+        console.log("Protected data:", data);
+      } catch (error) {
+        console.error("Error fetching protected data:", error);
+      }
+    };
+    fetchProtectedData();
+  }, []);
 
   const [name, setName] = useState("Kevin Tsoi");
 
+  const [gradDate, setGradDate] = useState("2005");
   const [major, setMajor] = useState("Computer Science");
-  const [gradDate, setGradDate] = useState("May 2027");
-
-  const [degree, setDegree] = useState("B.S. in Computer Science");
-  const [company, setCompany] = useState("Intern at IBM");
+  const [degree, setDegree] = useState("B.S.");
+  const [company, setCompany] = useState("IBM");
 
   const [title, setTitle] = useState("Professor");
   const [department, setDepartment] = useState("Departent of Computer Sciece");
@@ -19,29 +36,6 @@ function Profile() {
 
   const connectWith = () => {
     setIsPending(!isPending);
-  };
-
-  {
-    /* to render different intrefaces based on usertype */
-  }
-  const userDetails = {
-    student: {
-      label: "Student",
-      description: `${major} • ${gradDate}`,
-    },
-    alumni: {
-      label: "Alumni",
-      description: `${degree} • ${company}`,
-    },
-    faculty: {
-      label: "Faculty",
-      description: `${title} • ${department}`,
-    },
-  };
-
-  const { label, description } = userDetails[userType] || {
-    label: "Unknown",
-    description: "User type not recognized",
   };
 
   return (
@@ -59,10 +53,10 @@ function Profile() {
         </div>
 
         <div>
-          <p className="font-extrabold text-3xl tracking-tighter"> Name</p>
+          <p className="font-extrabold text-3xl tracking-tighter"> {name}</p>
 
-          <p className="text-lg font-semibold">{label}</p>
-          <p className="text-sm text-gray-400">{description}</p>
+          <p className="text-lg font-semibold">{company}</p>
+          <p className="text-sm text-gray-400">{`${degree} ${major} • Graduated ${gradDate}`}</p>
         </div>
 
         {/* importing the svgs is not working */}
