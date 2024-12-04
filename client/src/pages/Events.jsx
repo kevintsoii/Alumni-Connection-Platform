@@ -6,8 +6,10 @@ function EventsPage() {
 
   const [error, setError] = useState("");
   const [wallError, setWallError] = useState("");
+  const [isOpen, setIsOpen] = useState({});
 
   const [events, setEvents] = useState([]);
+  const [rsvps, setRsvps] = useState([]);
 
   const [newEvent, setNewEvent] = useState({
     name: "",
@@ -44,6 +46,38 @@ function EventsPage() {
     fetchProtectedData();
   }, []);
 
+  useEffect(() => {
+    const fetchProtectedData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/rsvps/", {
+          method: "GET",
+          headers: { Authorization: `${token}` },
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          setWallError(data.error);
+          if (data.error == "Invalid token") {
+            setWallError("You must be logged in.");
+          }
+        } else {
+          setRsvps(data.rsvped);
+        }
+      } catch (error) {
+        console.error("Error fetching protected data:", error);
+      }
+    };
+    fetchProtectedData();
+  }, []);
+
+  const toggleDropdown = (eventId) => {
+    setIsOpen((prev) => ({
+      ...prev,
+      [eventId]: !prev[eventId],
+    }));
+  };
+
   const handleCreateEvent = async () => {
     if (newEvent.name.trim() == "" || newEvent.timestamp.trim() == "") {
       setError("Please fill out all required fields.");
@@ -75,15 +109,39 @@ function EventsPage() {
     }
   };
 
-  const handleRSVP = (id) => {
+  const handleRSVP = async (id, deletes = false) => {
+    try {
+      const response = await fetch(`http://localhost:8000/rsvps/${id}/`, {
+        method: deletes ? "DELETE" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.message) {
+        if (deletes) {
+          setRsvps(rsvps.filter((rsvp) => rsvp !== id));
+        } else {
+          setRsvps([...(rsvps || []), id]);
+        }
+      } else if (data.error) {
+        setWallError(data.error);
+      }
+    } catch (error) {
+      setWallError(error.message);
+    }
+
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
-        event.id === id
+        event.eventID === id
           ? {
               ...event,
-              rsvps: event.rsvps.includes("Current User")
-                ? event.rsvps.filter((rsvp) => rsvp !== "Current User")
-                : [...event.rsvps, "Current User"],
+              rsvps: event.rsvpers.includes("Current User")
+                ? event.rsvpers.filter((rsvp) => rsvp !== "Current User")
+                : [...event.rsvpers, "Current User"],
             }
           : event
       )
@@ -185,38 +243,65 @@ function EventsPage() {
 
         {events.map((event) => (
           <div
-            key={event.id}
+            key={event.eventID}
             className="bg-white rounded-lg shadow-md p-4 mt-4"
           >
             <h3 className="font-semibold text-xl">{event.name}</h3>
-            <p className="text-gray-500 mt-2">Date & Time: {event.timestamp}</p>
-            <p className="text-gray-500">
-              Location: {event.street && `${event.street}, `}
-              {event.city && `${event.city}, `}
-              {event.state && `${event.state}, `}
-              {event.ZIP && `${event.ZIP}`}
+            <p className="text-gray-600 mt-2">
+              <span className="font-medium">Attendees: </span>
+              {event.rsvpCount}
             </p>
-            <p className="text-gray-500">{event.description}</p>
+            <p className="text-gray-600">
+              <span className="font-medium">Date & Time: </span>
+              {event.timestamp}
+            </p>
+            {(event.street || event.city || event.state || event.ZIP) && (
+              <p className="text-gray-600">
+                <span className="font-medium">Location: </span>
+                {event.street && `${event.street}, `}
+                {event.city && `${event.city}, `}
+                {event.state && `${event.state}, `}
+                {event.ZIP && `${event.ZIP}`}
+              </p>
+            )}
+            <p className="text-gray-600 mt-2">{event.description}</p>
+
             <div className="mt-4">
               <button
-                onClick={() => handleRSVP(event.id)}
+                onClick={() =>
+                  rsvps?.includes(event.eventID)
+                    ? handleRSVP(event.eventID, true)
+                    : handleRSVP(event.eventID)
+                }
                 className={`${
-                  event.rsvps?.includes("Current User")
-                    ? "bg-red-500"
-                    : "bg-green-500"
+                  rsvps?.includes(event.eventID) ? "bg-red-500" : "bg-green-500"
                 } text-white rounded-full px-4 py-2 hover:bg-opacity-75`}
               >
-                {event.rsvps?.includes("Current User") ? "Cancel RSVP" : "RSVP"}
+                {rsvps?.includes(event.eventID) ? "Cancel RSVP" : "RSVP"}
               </button>
             </div>
-            {event.rsvps?.length > 0 && (
-              <div className="mt-4">
-                <h4 className="font-semibold">Attendees:</h4>
-                {event.rsvps?.map((rsvp, index) => (
-                  <p key={index} className="text-gray-500">
-                    {rsvp}
-                  </p>
-                ))}
+
+            {event.rsvpers?.length > 0 && (
+              <div className="mt-3">
+                <button
+                  onClick={() => toggleDropdown(event.eventID)}
+                  className={`my-2 ${
+                    isOpen[event.eventID]
+                      ? "bg-gray-300 py-1 px-2 rounded-lg"
+                      : ""
+                  }`}
+                >
+                  {isOpen[event.eventID] ? "Hide" : "Show Attendees"}
+                </button>
+                {isOpen[event.eventID] && (
+                  <div className="border-gray-300 grid grid-cols-3 ">
+                    {event.rsvpers.map((rsvp, index) => (
+                      <p key={index} className="text-gray-700">
+                        {rsvp}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

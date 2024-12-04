@@ -197,6 +197,8 @@ function AlumniWall() {
           />
         </div>
 
+        <hr className="border-1 p-2 text-black mt-8"></hr>
+
         {wallError && (
           <p className="text-red-500 text-center my-4">{wallError}</p>
         )}

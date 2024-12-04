@@ -28,4 +28,7 @@ urlpatterns = [
 
     path('donations/<int:id>/', DonationView.as_view(), name='job postings'),
     path('rsvps/<int:id>/', RSVPView.as_view(), name='job postings'),
+
+    path('rsvps/', rsvps_view, name='get user rsvps'),
+    path('likes/', likes_view, name='get user likes'),
 ]

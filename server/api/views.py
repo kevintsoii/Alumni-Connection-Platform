@@ -151,7 +151,7 @@ class ConnectionView(APIView):
         user2 = id
 
         if user1 == user2:
-            return Response({"error": "Cannot connect to yourself"}, status=400)
+            return JsonResponse({"error": "Cannot connect to yourself"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -160,9 +160,28 @@ class ConnectionView(APIView):
                     VALUES (%s, %s)
                 """, [user1, user2])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
         
-        return Response({"message": "Connection request sent!"})
+        return JsonResponse({"message": "Connection request sent!"})
+
+    @method_decorator(auth_middleware())
+    def delete(self, request, id):
+        user1 = request.session["id"]
+        user2 = id
+
+        if user1 == user2:
+            return JsonResponse({"error": "Cannot connect to yourself"}, status=400)
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    DELETE FROM Connection
+                    WHERE user1 = %s AND user2 = %s
+                """, [user1, user2])
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+        
+        return JsonResponse({"message": "Connection request removed!"})
     
     @method_decorator(auth_middleware())
     def get(self, request, id):
@@ -186,13 +205,13 @@ class ConnectionView(APIView):
             connection_accepted = cursor.fetchone()[0] > 0
         
         if connection_sent and connection_accepted:
-            return Response({"status": "connected"})
+            return JsonResponse({"status": "connected"})
         elif connection_sent:
-            return Response({"status": "sent"})
+            return JsonResponse({"status": "sent"})
         elif connection_accepted:
-            return Response({"status": "received"})
+            return JsonResponse({"status": "received"})
         else:
-            return Response({"status": "not connected"})
+            return JsonResponse({"status": "not connected"})
 
 @api_view(['GET'])
 @auth_middleware()
@@ -228,7 +247,7 @@ class AlumniView(APIView):
         user = request.session["id"]
 
         if not company or not industry or len(contacts) > 3:
-            return Response({"error": "Field validation error"}, status=400)
+            return JsonResponse({"error": "Field validation error"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -240,18 +259,19 @@ class AlumniView(APIView):
                 """, [user, company, industry])
 
                 for url in contacts:
-                    cursor.execute("""
-                        INSERT INTO AlumniContact (user, url)
-                        VALUES (%s, %s)
-                    """, [user, url])
+                    if url:
+                        cursor.execute("""
+                            INSERT INTO AlumniContact (user, url)
+                            VALUES (%s, %s)
+                        """, [user, url])
 
                 cursor.execute("COMMIT;")
         except Exception as e:
             with connection.cursor() as cursor:
                 cursor.execute("ROLLBACK;")
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
         
-        return Response({"message": "Added to alumni wall!"})
+        return JsonResponse({"message": "Added to alumni wall!"})
     
     @method_decorator(auth_middleware())
     def get(self, request):
@@ -310,7 +330,7 @@ class PostView(APIView):
         user = request.session["id"]
 
         if not title or not text or len(medias) > 3:
-            return Response({"error": "Error validating fields"}, status=400)
+            return JsonResponse({"error": "Error validating fields"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -332,9 +352,9 @@ class PostView(APIView):
         except Exception as e:
             with connection.cursor() as cursor:
                 cursor.execute("ROLLBACK;")
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
         
-        return Response({"message": "Added to posts!"})
+        return JsonResponse({"message": "Added to posts!"})
     
     @method_decorator(auth_middleware())
     def get(self, request):
@@ -391,9 +411,9 @@ def like_view(request, id):
                     VALUES (%s, %s)
                 """, [user, id])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
         
-        return Response({"message": "Liked!"})
+        return JsonResponse({"message": "Liked!"})
     else:
         try:
             with connection.cursor() as cursor:
@@ -402,9 +422,9 @@ def like_view(request, id):
                     WHERE user = %s AND post = %s
                 """, [user, id])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
         
-        return Response({"message": "Unliked!"})
+        return JsonResponse({"message": "Unliked!"})
 
 class CommentView(APIView):
     @method_decorator(auth_middleware())
@@ -414,7 +434,7 @@ class CommentView(APIView):
         user = request.session["id"]
 
         if not comment:
-            return Response({"error": "Missing required fields"}, status=400)
+            return JsonResponse({"error": "Missing required fields"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -423,9 +443,9 @@ class CommentView(APIView):
                     VALUES (%s, %s, %s)
                 """, [user, id, comment])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
         
-        return Response({"message": "Added comment!"})
+        return JsonResponse({"message": "Added comment!"})
     
     @method_decorator(auth_middleware())
     def get(self, request, id):
@@ -463,7 +483,7 @@ class FundraiserView(APIView):
         creator = request.session["id"]
 
         if not all([name, goal, ends]):
-            return Response({"error": "Missing required fields"}, status=400)
+            return JsonResponse({"error": "Missing required fields"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -521,7 +541,7 @@ class SocialEventView(APIView):
         creator = request.session["id"]
 
         if not all([name, timestamp]):
-            return Response({"error": "Missing required fields"}, status=400)
+            return JsonResponse({"error": "Missing required fields"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -530,18 +550,22 @@ class SocialEventView(APIView):
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """, [name, creator, timestamp, street, state, city, ZIP, description])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
 
-        return Response({"message": "Social event created!"})
+        return JsonResponse({"message": "Social event created!"})
 
     @method_decorator(auth_middleware())
     def get(self, request):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                    SELECT e.eventID, e.name, e.timestamp, e.street, e.state, e.city, e.ZIP, e.description, u.userID, u.first, u.last
+                    SELECT e.eventID, e.name, e.timestamp, e.street, e.state, e.city, e.ZIP, e.description,
+                               (SELECT COUNT(*) FROM RSVP r WHERE r.event = e.eventID) AS rsvpCount,
+                               GROUP_CONCAT(CONCAT(u.first, ' ', u.last) SEPARATOR ', ') AS rsvpers
                     FROM SocialEvent e
-                    INNER JOIN User u ON e.creator = u.userID
+                    LEFT JOIN RSVP r ON e.eventID = r.event
+                    LEFT JOIN User u ON r.user = u.userID
+                    GROUP BY e.eventID;
                 """)
                 rows = cursor.fetchall()
         except Exception as e:
@@ -557,11 +581,8 @@ class SocialEventView(APIView):
                 "city": row[5],
                 "ZIP": row[6],
                 "description": row[7],
-                "creator": {
-                    "userID": row[8],
-                    "first": row[9],
-                    "last": row[10]
-                }
+                "rsvpCount": row[8],
+                "rsvpers": row[9].split(", ") if row[9] else [],
             }
             for row in rows
         ]
@@ -578,7 +599,7 @@ class JobView(APIView):
         creator = request.session["id"]
 
         if not all([title, URL]):
-            return Response({"error": "Missing required fields"}, status=400)
+            return JsonResponse({"error": "Missing required fields"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -587,9 +608,9 @@ class JobView(APIView):
                     VALUES (%s, %s, %s, %s)
                 """, [creator, URL, description, title])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
 
-        return Response({"message": "Job posting created!"})
+        return JsonResponse({"message": "Job posting created!"})
 
     @method_decorator(auth_middleware())
     def get(self, request):
@@ -629,7 +650,7 @@ class DonationView(APIView):
         user = request.session["id"]
 
         if not all([amount]):
-            return Response({"error": "Missing required fields"}, status=400)
+            return JsonResponse({"error": "Missing required fields"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -638,9 +659,9 @@ class DonationView(APIView):
                     VALUES (%s, %s, %s)
                 """, [id, user, amount])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
 
-        return Response({"message": "Donation added"})
+        return JsonResponse({"message": "Donation added"})
 
     @method_decorator(auth_middleware())
     def get(self, request, id):
@@ -683,9 +704,24 @@ class RSVPView(APIView):
                     VALUES (%s, %s)
                 """, [user, id])
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
 
-        return Response({"message": "RSVP added"})
+        return JsonResponse({"message": "RSVP added"})
+    
+    @method_decorator(auth_middleware())
+    def delete(self, request, id):
+        user = request.session["id"]
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    DELETE FROM RSVP
+                    WHERE user = %s AND event = %s
+                """, [user, id])
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+        return JsonResponse({"message": "RSVP removed"})
 
     @method_decorator(auth_middleware())
     def get(self, request, id):
@@ -735,6 +771,42 @@ class UsersView(APIView):
                 for row in rows
             ]
 
-            return Response(users)
+            return JsonResponse(users)
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
+
+@api_view(['GET'])
+@auth_middleware()
+def rsvps_view(request):
+    user = request.session["id"]
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT event
+                FROM RSVP r
+                WHERE user = %s;
+            """, [user])
+            rows = cursor.fetchall()
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+    return JsonResponse({"rsvped": [row[0] for row in rows]})
+
+@api_view(['GET'])
+@auth_middleware()
+def likes_view(request):
+    user = request.session["id"]
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT post
+                FROM `Like` l
+                WHERE user = %s;
+            """, [user])
+            rows = cursor.fetchall()
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+    return JsonResponse({"likes": [row[0] for row in rows]})

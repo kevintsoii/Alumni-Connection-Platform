@@ -9,6 +9,7 @@ function Profile() {
   const [profileData, setProfileData] = useState({});
   const name = profileData?.first + " " + profileData?.last;
   const [connectionStatus, setConnectionStatus] = useState("");
+  const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
     const fetchProtectedData = async () => {
@@ -49,12 +50,31 @@ function Profile() {
     getConnectionStatus();
   }, []);
 
-  const connectWith = async () => {
+  useEffect(() => {
+    const getContacts = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/contacts/${userID}/`,
+          {
+            method: "GET",
+            headers: { Authorization: `${token}` },
+          }
+        );
+        const data = await response.json();
+        setContacts(data.urls);
+      } catch (error) {
+        console.error("Error connecting with user:", error);
+      }
+    };
+    getContacts();
+  }, []);
+
+  const connectWith = async (deletes = false) => {
     try {
       const response = await fetch(
         `http://localhost:8000/connections/${userID}/`,
         {
-          method: "POST",
+          method: deletes ? "DELETE" : "POST",
           headers: { Authorization: `${token}` },
           body: JSON.stringify("sent"),
         }
@@ -78,7 +98,7 @@ function Profile() {
         <button
           className="flex items-center justify-center w-28 h-8 rounded-2xl space-x-2 
          bg-primary text-white font-bold  hover:bg-blue-800"
-          onClick={connectWith}
+          onClick={() => connectWith()}
         >
           <>
             <svg
@@ -88,10 +108,10 @@ function Profile() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-user-round-plus"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-user-round-plus"
             >
               <path d="M2 21a8 8 0 0 1 13.292-6" />
               <circle cx="10" cy="8" r="5" />
@@ -109,6 +129,7 @@ function Profile() {
           className="flex items-center justify-center w-28 h-8 rounded-2xl space-x-2
     
            bg-whitesmoke border-2 border-primary text-primary font-bold hover:bg-gray-200"
+          onClick={() => connectWith(true)}
         >
           <>
             <svg
@@ -118,10 +139,10 @@ function Profile() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-clock"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-clock"
             >
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
@@ -136,7 +157,7 @@ function Profile() {
         <button
           className="flex items-center justify-center w-40 h-8 rounded-2xl space-x-2 
        bg-primary text-white font-bold  hover:bg-blue-800"
-          onClick={connectWith}
+          onClick={() => connectWith()}
         >
           <>
             <svg
@@ -146,10 +167,10 @@ function Profile() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-user-round-check"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-user-round-check"
             >
               <path d="M2 21a8 8 0 0 1 13.292-6" />
               <circle cx="10" cy="8" r="5" />
@@ -167,6 +188,7 @@ function Profile() {
           className="flex items-center justify-center w-36 h-8 rounded-2xl space-x-2
   
          bg-whitesmoke border-2 border-primary text-primary font-bold hover:bg-gray-200"
+          onClick={() => connectWith(true)}
         >
           <>
             <svg
@@ -176,10 +198,10 @@ function Profile() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-users"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-users"
             >
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
@@ -194,9 +216,8 @@ function Profile() {
   }
 
   return (
-    <div>
-      <div className="rounded-lg max-w-3xl bg-white"></div>
-      <div className="relative rounded-lg max-w-7xl mx-auto grid p-16 gap-16 bg-white">
+    <div className="">
+      <div className="flex relative rounded-lg max-w-7xl mx-auto grid p-16 gap-16 bg-white">
         <div className="absolute inset-0 z-0 w-full h-40 rounded-t-lg bg-gradient-to-r from-[#2D2790] via-[#090979] to-[#00B6DB]"></div>
 
         <div className="relative z-10 top-8 rounded-full border-white border-4 bg-gray-200 w-32 h-32">
@@ -210,8 +231,23 @@ function Profile() {
         <div>
           <p className="font-extrabold text-3xl tracking-tighter">{name}</p>
 
-          <p className="text-lg font-semibold">{profileData?.company}</p>
-          <p className="text-sm text-gray-400">{`${profileData?.degree} ${profileData?.major} • Graduated ${profileData?.gradMonth}-${profileData?.gradYear}`}</p>
+          <p className="text-2xl font-semibold">{profileData?.company}</p>
+          <p className="text-lg text-gray-600">{`${profileData?.degree} ${profileData?.major} • Graduated ${profileData?.gradMonth}-${profileData?.gradYear}`}</p>
+        </div>
+
+        <div className="flex items-center gap-x-4 gap-y-4 flex-wrap">
+          {contacts.length > 0 &&
+            contacts.map((contact, index) => (
+              <a
+                key={index}
+                href={contact.includes("http") ? contact : `https://${contact}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center px-2 py-1 rounded-full bg-blue-200"
+              >
+                {contact}
+              </a>
+            ))}
         </div>
 
         {/* render connect button */}
