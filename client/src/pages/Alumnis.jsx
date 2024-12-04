@@ -142,6 +142,7 @@ function AlumniWall() {
               Add Yourself
             </button>
           </div>
+          
           {error && <p className="text-red-500 text-center my-4">{error}</p>}
           <hr className="border-1 p-2"></hr>
         </>
@@ -201,14 +202,14 @@ function AlumniWall() {
 
         {filteredAlumni.map((alum) => (
           <div
-            key={alum.id}
+            key={alum.userID}
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
           >
             <h3 className="font-semibold text-xl">
               {alum.first} {alum.last}
             </h3>
             <p className="text-gray-500">Graduation Year: {alum.gradYear}</p>
-            <p className="text-gray-500">Major: {alum.major}</p>
+            {alum.major && <p className="text-gray-500">Major: {alum.major}</p>}
             <p className="text-gray-500">Company: {alum.company}</p>
             <p className="text-gray-500">Industry: {alum.industry}</p>
           </div>
