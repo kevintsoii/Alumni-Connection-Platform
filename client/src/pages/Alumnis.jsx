@@ -1,37 +1,29 @@
-import React, { useState } from "react";
-import { render } from "react-dom";
+import React, { useState, useEffect } from "react";
 
 function AlumniWall() {
-  const [userType, setUserType] = useState("alumni");
-  const [alumni, setAlumni] = useState([
-    {
-      id: 1,
-      firstName: "John",
-      lastName: "Doe",
-      gradYear: 2020,
-      major: "Computer Science",
-      company: "Tech Corp",
-      industry: "Technology",
-    },
-    {
-      id: 2,
-      firstName: "Jane",
-      lastName: "Smith",
-      gradYear: 2019,
-      major: "Business Administration",
-      company: "Finance Co",
-      industry: "Finance",
-    },
-    {
-      id: 3,
-      firstName: "Mike",
-      lastName: "Johnson",
-      gradYear: 2021,
-      major: "Mechanical Engineering",
-      company: "AutoWorks",
-      industry: "Automotive",
-    },
-  ]);
+  const userType = localStorage.getItem("permission_level");
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchProtectedData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/alumni/", {
+          method: "GET",
+          headers: { Authorization: `${token}` },
+        });
+        const data = await response.json();
+        console.log("Protected data:", data);
+
+        setAlumni(data.alumni);
+      } catch (error) {
+        console.error("Error fetching protected data:", error);
+      }
+    };
+    fetchProtectedData();
+  }, []);
+
+  const [alumni, setAlumni] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState({
     gradYear: "",
@@ -41,15 +33,12 @@ function AlumniWall() {
   });
 
   const [newAlumni, setNewAlumni] = useState({
-    firstName: "",
-    lastName: "",
-    gradYear: "",
-    major: "",
     company: "",
     industry: "",
+    contacts: [],
   });
 
-  const handleAddAlumni = () => {
+  const handleAddAlumni = async () => {
     if (
       newAlumni.firstName.trim() !== "" &&
       newAlumni.lastName.trim() !== "" &&
@@ -58,19 +47,46 @@ function AlumniWall() {
       newAlumni.company.trim() !== "" &&
       newAlumni.industry.trim() !== ""
     ) {
-      const newEntry = {
-        ...newAlumni,
-        id: alumni.length + 1,
-      };
-      setAlumni([newEntry, ...alumni]);
-      setNewAlumni({
-        firstName: "",
-        lastName: "",
-        gradYear: "",
-        major: "",
-        company: "",
-        industry: "",
-      });
+      try {
+        // Prepare the data to be sent to the server
+        const newEntry = {
+          company: newAlumni.company,
+          industry: newAlumni.industry,
+          contacts: newAlumni.contacts,
+        };
+
+        // Send the POST request to your API
+        const response = await fetch("http://localhost:8000/alumni/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`, // Include the token if required by the API
+          },
+          body: JSON.stringify(newEntry), // Convert the object to JSON
+        });
+
+        // Handle the response
+        if (response.ok) {
+          const addedAlumni = await response.json(); // Parse the returned data
+          console.log("Alumni successfully added:", addedAlumni);
+
+          // Update the local alumni list with the new entry
+          setAlumni([addedAlumni, ...alumni]);
+
+          // Clear the form
+          setNewAlumni({
+            company: "",
+            industry: "",
+            contacts: [],
+          });
+        } else {
+          console.error("Failed to add alumni:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error while adding alumni:", error);
+      }
+    } else {
+      console.error("All fields must be filled out!");
     }
   };
 
@@ -91,48 +107,10 @@ function AlumniWall() {
   );
 
   function renderNewAlumniForm() {
-    if (userType === "staff" || "alumni") {
+    if (userType === "staff" || userType === "alumni") {
       return (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-            <input
-              type="text"
-              placeholder="First Name"
-              value={newAlumni.firstName}
-              onChange={(e) =>
-                setNewAlumni({ ...newAlumni, firstName: e.target.value })
-              }
-              className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={newAlumni.lastName}
-              onChange={(e) =>
-                setNewAlumni({ ...newAlumni, lastName: e.target.value })
-              }
-              className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              type="text"
-              placeholder="Grad Year"
-              value={newAlumni.gradYear}
-              onChange={(e) =>
-                setNewAlumni({ ...newAlumni, gradYear: e.target.value })
-              }
-              className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              placeholder="Major"
-              value={newAlumni.major}
-              onChange={(e) =>
-                setNewAlumni({ ...newAlumni, major: e.target.value })
-              }
-              className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
             <input
               type="text"
               placeholder="Company"
@@ -146,6 +124,15 @@ function AlumniWall() {
               type="text"
               placeholder="Industry"
               value={newAlumni.industry}
+              onChange={(e) =>
+                setNewAlumni({ ...newAlumni, industry: e.target.value })
+              }
+              className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              placeholder="Contacts"
+              value={newAlumni.contacts}
               onChange={(e) =>
                 setNewAlumni({ ...newAlumni, industry: e.target.value })
               }
@@ -216,7 +203,7 @@ function AlumniWall() {
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
           >
             <h3 className="font-semibold text-xl">
-              {alum.firstName} {alum.lastName}
+              {alum.first} {alum.last}
             </h3>
             <p className="text-gray-500">Graduation Year: {alum.gradYear}</p>
             <p className="text-gray-500">Major: {alum.major}</p>
