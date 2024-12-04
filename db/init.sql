@@ -136,9 +136,23 @@ BEGIN
     IF (SELECT COUNT(*) FROM User) = 0 THEN
         INSERT INTO User (email, password, first, last, major, degree, gradMonth, gradYear, type, department, title)
         VALUES
-        ('student@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'John', 'Doe', 'Computer Science', 'BS', 5, 2027, 'student', NULL, NULL),
-        ('alumni@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Alice', 'Smith', 'Economics', 'MS', 5, 2023, 'alumni', NULL, NULL),
-        ('staff@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Bob', 'Jones', 'Mathematics', 'PhD', 6, 2005, 'staff', 'Science', 'Researcher');
+        ('student1@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'John', 'Adams', 'Computer Science', 'MS', 12, 2028, 'student', NULL, NULL),
+        ('student2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Bob', 'Carter', 'Biology', 'BS', 12, 2025, 'student', NULL, NULL),
+        ('student3@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Katie', 'Evans', 'Mathematics', 'PhD', 5, 2028, 'student', NULL, NULL),
+        ('student4@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Elsa', 'Perez', 'Mechanical Engineering', 'BS', 12, 2025, 'student', NULL, NULL),
+        ('student5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Tiffany', 'Hill', 'Mathematics', 'PhD', 12, 2029, 'student', NULL, NULL),
+
+        ('alumni1@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Joseph', 'Hill', 'Mathematics', 'BS', 5, 2023, 'alumni', NULL, NULL),
+        ('alumni2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Taylor', 'Walker', 'Computer Science', 'BS', 5, 2022, 'alumni', NULL, NULL),
+        ('alumni3@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Eddie', 'Young', 'Biology', 'MS', 12, 2023, 'alumni', NULL, NULL),
+        ('alumni4@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Alex', 'Adams', 'Electrical Engineering', 'PhD', 12, 2021, 'alumni', NULL, NULL),
+        ('alumni5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Casey', 'Lee', 'Civil Engineering', 'MS', 5, 2020, 'alumni', NULL, NULL)
+
+        ('staff1@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Lebron', 'Green', 'Biology', 'PhD', 6, 1997, 'staff', 'Science', 'Professor'),
+        ('staff2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Mary', 'Jonhson', 'Civil Engineering', 'PhD', 6, 2004, 'staff', 'Engineering', 'Researcher'),
+        ('staff3@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'David', 'Hall', 'Chemistry', 'BS', 6, 2005, 'staff', 'Humanities', 'Administrator'),
+        ('staff4@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Riley', 'Adams', 'Physics', 'BS', 5, 1999, 'staff', 'Mathematics', 'Administrator'),
+        ('staff5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Emma', 'Walker', 'Biology', 'PhD', 5, 2005, 'staff', 'Science', 'Lab Assistant');
     END IF;
 
     IF (SELECT COUNT(*) FROM Connection) = 0 THEN

@@ -7,7 +7,7 @@ function Profile() {
   useEffect(() => {
     const fetchProtectedData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/alumni/", {
+        const response = await fetch("http://localhost:8000/users/3", {
           method: "GET",
           mode: "no-cors",
           headers: { Authorization: `${token}` },
