@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function AlumniWall() {
   const token = localStorage.getItem("token");
@@ -95,7 +96,7 @@ function AlumniWall() {
       if (data.message) {
         window.location.reload();
       } else if (data.error) {
-        setError(data.error);
+        setError("You have already been added to the Alumni Wall!");
       }
     } catch (error) {
       setError(error.message);
@@ -142,7 +143,7 @@ function AlumniWall() {
               Add Yourself
             </button>
           </div>
-          
+
           {error && <p className="text-red-500 text-center my-4">{error}</p>}
           <hr className="border-1 p-2"></hr>
         </>
@@ -203,11 +204,13 @@ function AlumniWall() {
         {filteredAlumni.map((alum) => (
           <div
             key={alum.userID}
-            className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
+            className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4 hover:shadow-xl hover:scale-[101%] transition duration-500 "
           >
-            <h3 className="font-semibold text-xl">
-              {alum.first} {alum.last}
-            </h3>
+            <Link to={`/profile/${alum.userID}`}>
+              <h3 className="font-semibold text-xl hover:underline">
+                {alum.first} {alum.last}
+              </h3>
+            </Link>
             <p className="text-gray-500">Graduation Year: {alum.gradYear}</p>
             {alum.major && <p className="text-gray-500">Major: {alum.major}</p>}
             <p className="text-gray-500">Company: {alum.company}</p>

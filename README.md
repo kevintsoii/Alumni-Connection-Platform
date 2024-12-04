@@ -22,7 +22,16 @@ Meeting Minutes: [meetingMinutes.md](https://github.com/kevintsoii/Alumni-Connec
 
 3. Visit the website at http://localhost:5173/
 
-4. Clean Up Docker files
+   - There are valid accounts for testing
+
+   ```
+   student1@sjsu.edu
+   alumni1@sjsu.edu
+   staff1@sjsu.edu
+   Password: password
+   ```
+
+5. Clean Up Docker files
 
    ```
    docker-compose down -v --rmi all
