@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 function FundraisersPage() {
   const token = localStorage.getItem("token");
   const [userType, setUserType] = useState("staff");
+
   const [fundraisers, setFundraisers] = useState([]);
-  const [loading, setLoading] = useState(true); // Track loading state
   const [newFundraiser, setNewFundraiser] = useState({
     name: "",
     goal: "",
@@ -14,6 +14,8 @@ function FundraisersPage() {
   const [donationAmount, setDonationAmount] = useState({});
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [accessError, setAccesError] = useState("");
+
 
   // fetch fundraisers from API
   useEffect(() => {
@@ -29,6 +31,7 @@ function FundraisersPage() {
           setFundraisers(data.fundraisers);
         } else {
           setError("Failed to fetch fundraisers. Status: " + response.status);
+          setAccesError("You must be logged in.")
         }
       } catch (error) {
         setError("Error fetching fundraisers: " + error.message);
@@ -160,6 +163,9 @@ function FundraisersPage() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold mb-4">Fundraisers</h1>
         {renderNewFundraiserForm()}
+        {accessError && (
+          <p className="text-red-500 text-center my-4">{accessError}</p>
+        )}
 
         {fundraisers.map((fundraiser) => (
           <div
