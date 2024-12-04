@@ -23,11 +23,11 @@ function NavBar() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0">
+            <NavLink to="/" className="flex-shrink-0" active={location.pathname === "/"}>
               <img src={logo} alt="Spartan Outreach Logo" className="h-8 w-8" />
-            </Link>
+            </NavLink>
             <div className="ml-10 flex items-baseline space-x-4">
-              <NavLink to="/" active={location.pathname === "/"}>
+              <NavLink to="/posts" active={location.pathname === "/posts"}>
                 Home
               </NavLink>
               <NavLink to="/jobs" active={location.pathname === "/jobs"}>

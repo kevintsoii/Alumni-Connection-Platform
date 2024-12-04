@@ -43,7 +43,7 @@ const LoginPage = () => {
   };
 
   if (loggedIn) {
-    return <Navigate to="/alumni" />;
+    return <Navigate to="/posts" />;
   }
 
   return (
