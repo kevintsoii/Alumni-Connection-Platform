@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 function JobsPage() {
   const token = localStorage.getItem("token");
@@ -8,7 +8,7 @@ function JobsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [newJob, setNewJob] = useState({
     title: "",
-    URL: "",
+    url: "",
     description: "",
   });
 
@@ -29,7 +29,7 @@ function JobsPage() {
 
         const data = await response.json();
 
-        console.log(data)
+        console.log(data);
         if (data.error) {
           setWallError(data.error);
           if (data.error === "Invalid token") {
@@ -45,11 +45,10 @@ function JobsPage() {
     fetchJobs();
   }, []);
 
-
   const handleCreateJob = async () => {
     if (
       newJob.title.trim() !== "" &&
-      newJob.URL.trim() !== "" &&
+      newJob.url.trim() !== "" &&
       newJob.description.trim() !== ""
     ) {
       try {
@@ -92,7 +91,7 @@ function JobsPage() {
             type="text"
             placeholder="Job URL"
             value={newJob.URL}
-            onChange={(e) => setNewJob({ ...newJob, URL: e.target.value })}
+            onChange={(e) => setNewJob({ ...newJob, url: e.target.value })}
             className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
@@ -110,6 +109,8 @@ function JobsPage() {
           >
             Add Job
           </button>
+
+          {error && <p className="text-red-500 text-center my-4">{error}</p>}
         </div>
       );
     }
@@ -119,7 +120,9 @@ function JobsPage() {
     <div className="space-y-4">
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold mb-4">Jobs</h1>
+
         {renderNewJobForm()}
+
         <div className="bg-[#fbfbf9] rounded-lg shadow-md p-4">
           <input
             type="text"
@@ -136,7 +139,7 @@ function JobsPage() {
 
         {filteredJobs.map((job) => (
           <div
-            key={job.id}
+            key={job.jobID}
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
           >
             <h3 className="font-semibold text-xl">{job.title}</h3>
