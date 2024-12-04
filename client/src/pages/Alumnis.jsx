@@ -1,28 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function AlumniWall() {
-  const userType = localStorage.getItem("permission_level");
-  const [error, setError] = useState("");
-
   const token = localStorage.getItem("token");
+  const userType = localStorage.getItem("permission_level");
 
-  useEffect(() => {
-    const fetchProtectedData = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/alumni/", {
-          method: "GET",
-          headers: { Authorization: `${token}` },
-        });
-        const data = await response.json();
-        console.log("Protected data:", data);
-
-        setAlumni(data.alumni);
-      } catch (error) {
-        console.error("Error fetching protected data:", error);
-      }
-    };
-    fetchProtectedData();
-  }, []);
+  const [error, setError] = useState("");
+  const [wallError, setWallError] = useState("");
 
   const [alumni, setAlumni] = useState([]);
 
@@ -36,60 +19,8 @@ function AlumniWall() {
   const [newAlumni, setNewAlumni] = useState({
     company: "",
     industry: "",
-    contacts: [],
+    contacts: "",
   });
-
-  const handleAddAlumni = async () => {
-    if (
-      newAlumni.company.trim() !== "" &&
-      newAlumni.industry.trim() !== "" &&
-      newAlumni.contacts.trim() !== ""
-    ) {
-      try {
-        const contactsArray = newAlumni.contacts
-          .split(",")
-          .map((contact) => contact.trim());
-
-        const newEntry = {
-          company: newAlumni.company,
-          industry: newAlumni.industry,
-          contacts: contactsArray,
-        };
-
-        const response = await fetch("http://localhost:8000/alumni/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${token}`,
-          },
-          body: JSON.stringify(newEntry),
-        });
-
-        if (data.message) {
-          const addedAlumni = await response.json();
-          console.log("Alumni successfully added:", addedAlumni);
-
-          setAlumni([addedAlumni, ...alumni]);
-
-          setNewAlumni({
-            company: "",
-            industry: "",
-            contacts: "",
-          });
-          setError("");
-          window.location.reload();
-        } else if (data.error) {
-          console.error(data.error);
-        }
-      } catch (error) {
-        console.error("Error while adding alumni:", error);
-        setError("You have already been added to the alumni wall!");
-      }
-    } else {
-      console.error("All fields must be filled out!");
-      setError("All fields must be filled out!");
-    }
-  };
 
   const filteredAlumni = alumni.filter(
     (alum) =>
@@ -106,6 +37,70 @@ function AlumniWall() {
           .toLowerCase()
           .includes(searchQuery.industry.toLowerCase()))
   );
+
+  useEffect(() => {
+    const fetchProtectedData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/alumni/", {
+          method: "GET",
+          headers: { Authorization: `${token}` },
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+        if (data.error) {
+          setWallError(data.error);
+          if (data.error == "Invalid token") {
+            setWallError("You must be logged in.");
+          }
+        } else {
+          setAlumni(data.alumni);
+        }
+      } catch (error) {
+        console.error("Error fetching protected data:", error);
+      }
+    };
+    fetchProtectedData();
+  }, []);
+
+  const handleAddAlumni = async () => {
+    if (newAlumni.company.trim() == "" || newAlumni.industry.trim() == "") {
+      setError("All fields must be filled out!");
+      return;
+    }
+
+    try {
+      const contactsArray = newAlumni.contacts
+        .split(",")
+        .map((contact) => contact.trim());
+
+      const newEntry = {
+        company: newAlumni.company,
+        industry: newAlumni.industry,
+        contacts: contactsArray,
+      };
+
+      const response = await fetch("http://localhost:8000/alumni/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify(newEntry),
+      });
+
+      const data = await response.json();
+
+      if (data.message) {
+        window.location.reload();
+      } else if (data.error) {
+        setError(data.error);
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   function renderNewAlumniForm() {
     if (userType === "staff" || userType === "alumni") {
@@ -132,7 +127,7 @@ function AlumniWall() {
             />
             <input
               type="text"
-              placeholder="Contacts"
+              placeholder="Contacts (csv)"
               value={newAlumni.contacts}
               onChange={(e) =>
                 setNewAlumni({ ...newAlumni, contacts: e.target.value })
@@ -199,6 +194,11 @@ function AlumniWall() {
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+
+        {wallError && (
+          <p className="text-red-500 text-center my-4">{wallError}</p>
+        )}
+
         {filteredAlumni.map((alum) => (
           <div
             key={alum.id}
