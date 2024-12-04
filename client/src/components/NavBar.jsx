@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/spartan-logo.png";
-import profilePic from "/profilepic.png";
 
 function NavBar() {
   const location = useLocation();
@@ -48,19 +47,21 @@ function NavBar() {
             </div>
           </div>
 
-          <div className="ml-4 flex items-center md:ml-6 gap-3">
-            <a href="/profile">
-              <img
-                src={profilePic}
-                alt="Profile"
-                className="h-8 w-8 rounded-full"
-              />
-            </a>
-
+          <div className="ml-auto">
             {isLoggedIn ? (
-              <button onClick={handleLogout}>Logout</button>
+              <button
+                onClick={handleLogout}
+                className={`px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900`}
+              >
+                Logout
+              </button>
             ) : (
-              <Link to="/login">Login</Link>
+              <Link
+                to="/login"
+                className={`px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900`}
+              >
+                Login
+              </Link>
             )}
           </div>
         </div>
