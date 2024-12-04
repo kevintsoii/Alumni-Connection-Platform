@@ -1,32 +1,34 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 function Profile() {
+  const { userID } = useParams();
   const token = localStorage.getItem("token");
+  const [isPending, setIsPending] = useState(false);
+
+  const [profileData, setProfileData] = useState();
+
+  const name = profileData?.first + " " + profileData?.last;
 
   useEffect(() => {
     const fetchProtectedData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/users/2", {
-          method: "GET",
-          headers: { Authorization: `${token}` },
-        });
+        const response = await fetch(
+          `{http://localhost:8000/users/${userID}}`,
+          {
+            method: "GET",
+            headers: { Authorization: `${token}` },
+          }
+        );
         const data = await response.json();
         console.log("Protected data:", data);
+        setProfileData(data);
       } catch (error) {
         console.error("Error fetching protected data:", error);
       }
     };
     fetchProtectedData();
-  }, []);
-
-  const [name, setName] = useState("Kevin Tsoi");
-  const [gradDate, setGradDate] = useState("2005");
-  const [major, setMajor] = useState("Computer Science");
-  const [degree, setDegree] = useState("B.S.");
-  const [company, setCompany] = useState("IBM");
-  const [title, setTitle] = useState("Professor");
-  const [department, setDepartment] = useState("Departent of Computer Sciece");
-  const [isPending, setIsPending] = useState(false);
+  }, [userID]);
 
   const connectWith = () => {
     setIsPending(!isPending);
@@ -47,10 +49,10 @@ function Profile() {
         </div>
 
         <div>
-          <p className="font-extrabold text-3xl tracking-tighter"> {name}</p>
+          <p className="font-extrabold text-3xl tracking-tighter">{name}</p>
 
-          <p className="text-lg font-semibold">{company}</p>
-          <p className="text-sm text-gray-400">{`${degree} ${major} • Graduated ${gradDate}`}</p>
+          <p className="text-lg font-semibold">{profileData?.company}</p>
+          <p className="text-sm text-gray-400">{`${profileData.degree} ${profileData.major} • Graduated ${profileData.gradMonth} ${profileData.gradDate}`}</p>
         </div>
 
         {/* importing the svgs is not working */}
