@@ -146,7 +146,7 @@ BEGIN
         ('alumni2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Taylor', 'Walker', 'Computer Science', 'BS', 5, 2022, 'alumni', NULL, NULL),
         ('alumni3@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Eddie', 'Young', 'Biology', 'MS', 12, 2023, 'alumni', NULL, NULL),
         ('alumni4@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Alex', 'Adams', 'Electrical Engineering', 'PhD', 12, 2021, 'alumni', NULL, NULL),
-        ('alumni5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Casey', 'Lee', 'Civil Engineering', 'MS', 5, 2020, 'alumni', NULL, NULL)
+        ('alumni5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Casey', 'Lee', 'Civil Engineering', 'MS', 5, 2020, 'alumni', NULL, NULL),
 
         ('staff1@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Lebron', 'Green', 'Biology', 'PhD', 6, 1997, 'staff', 'Science', 'Professor'),
         ('staff2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Mary', 'Jonhson', 'Civil Engineering', 'PhD', 6, 2004, 'staff', 'Engineering', 'Researcher'),
