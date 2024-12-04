@@ -159,69 +159,151 @@ BEGIN
         INSERT INTO Connection (user1, user2) VALUES
         (1, 2),
         (2, 1),
-        (2, 3);
+        (2, 3),
+        (4, 5),
+        (5, 4),
+        (6, 9),
+        (6, 1),
+        (6, 3),
+        (1, 5),
+        (1, 7),
+        (7, 2),
+        (8, 6),
+        (8, 5),
+        (8, 7),
+        (8, 1),
+        (9, 8),
+        (9, 5),
+        (9, 3);
     END IF;
 
     IF (SELECT COUNT(*) FROM AlumniWall) = 0 THEN
         INSERT INTO AlumniWall (user, company, industry) VALUES
-        (2, 'Apple', 'Technology');
+        (6, 'Chase', 'Banking'),
+        (7, 'Google', 'Technology'),
+        (8, 'Pfizer', 'Biology'),
+        (9, 'Tesla', 'Automobile'),
+        (10, 'AECOM', 'Construction');
     END IF;
 
     IF (SELECT COUNT(*) FROM AlumniContact) = 0 THEN
         INSERT INTO AlumniContact (user, url) VALUES
-        (2, 'https://linkedin.com/in/alicesmith'),
-        (2, 'https://instagram.com/alicesmith');
+        (6, 'https://instagram.com/josephhill'),
+        (6, 'https://linkedin.com/in/josephhill'),
+        (7, 'https://x.com/taylorwalker'),
+        (7, 'https://instagram.com/taylorwalker'),
+        (7, 'https://linkedin.com/taylorwalker'),
+        (7, 'https://github.com/taylorwalker'),
+        (8, 'https://instagram.com/eddieyoung'),
+        (9, 'https://youtube.com/alexadams'),
+        (10, 'https://x.com/caseylee');
     END IF;
 
     IF (SELECT COUNT(*) FROM Post) = 0 THEN
         INSERT INTO Post (user, title, text) VALUES
         (2, 'My First Post', 'This is my first post!'),
-        (1, 'Hello World', 'Excited to join this platform!');
+        (1, 'Hello World', 'Excited to join this platform!'),
+        (6, 'Party', 'Anyone want to attend a party this weekend?!'),
+        (3, 'Dance', 'I am going to my favorite dance hall this weekend!'),
+        (3, 'Job', 'Who else is trying to find a job?'),
+        (8, 'Any Gamers?', 'Who wants to play League?'),
+        (9, 'Job', 'I just got a job offer!'),
+        (11, 'Feedback', 'Is everyone enjoying this app?'),
+        (12, 'Maintenance', 'There will be maintenance for Spartan Outreach this weekend!'),
+        (2, 'My Second Post', 'This is my second post!');
     END IF;
 
     IF (SELECT COUNT(*) FROM Media) = 0 THEN
         INSERT INTO Media (post, URL, type) VALUES
         (1, 'https://example.com/image1.jpg', 'photo'),
-        (2, 'https://example.com/video1.mp4', 'video');
+        (2, 'https://example.com/video1.mp4', 'video'),
+        (5, 'https://example.com/gif1.mp4', 'gif'),
+        (7, 'https://example.com/image7.mp4', 'photo'),
+        (7, 'https://example.com/video7.mp4', 'video'),
+        (8, 'https://example.com/video8.mp4', 'video'),
+        (10, 'https://example.com/image10.jpg', 'photo');
     END IF;
 
     IF (SELECT COUNT(*) FROM `Like`) = 0 THEN
         INSERT INTO `Like` (user, post) VALUES
         (1, 1),
-        (2, 2);
+        (2, 1),
+        (3, 1),
+        (4, 1),
+        (5, 1),
+        (6, 1),
+        (1, 2),
+        (1, 3),
+        (1, 6),
+        (1, 10),
+        (2, 10),
+        (3, 2),
+        (3, 3),
+        (4, 4),
+        (6, 5),
+        (7, 6);
     END IF;
 
     IF (SELECT COUNT(*) FROM Comment) = 0 THEN
         INSERT INTO Comment (user, post, comment) VALUES
-        (1, 2, 'Welcome to the platform!'),
-        (2, 1, 'Great first post!');
+        (1, 1, 'Welcome to the platform!'),
+        (2, 2, 'Nice to see you here!'),
+        (1, 4, 'I want to.'),
+        (2, 4, 'Cant come...'),
+        (10, 5, 'I am!'),
+        (3, 6, 'Add me'),
+        (6, 6, 'My username is explosion!'),
+        (8, 6, 'Lets play!'),
+        (1, 7, 'Congrats'),
+        (5, 7, 'Niceeeee!'),
+        (9, 7, 'Good job!'),
+        (12, 8, 'Any feedback is appreciated!'),
+        (1, 10, 'Hello again!');
     END IF;
 
     IF (SELECT COUNT(*) FROM Fundraiser) = 0 THEN
         INSERT INTO Fundraiser (creator, goal, description, ends, name) VALUES
-        (3, 1234.00, 'Raising funds for an AI video surveillance camera.', '2024-12-31', 'AI Research');
+        (11, 1234.00, 'Raising funds for an AI video surveillance camera.', '2024-12-2', 'AI Research'),
+        (13, 2500.00, 'Raising funds for a better SRAC.', '2025-2-30', 'Gym'),
+        (14, 750.00, 'Raising funds to provide food for the homeless!.', '2024-12-31', 'Food Drive');
     END IF;
 
     IF (SELECT COUNT(*) FROM Donation) = 0 THEN
         INSERT INTO Donation (fundraiser, user, amount) VALUES
-        (1, 2, 50.00),
-        (1, 3, 75.00);
+        (1, 2, 120.00),
+        (1, 5, 200.00),
+        (2, 7, 5.00),
+        (2, 8, 10.00),
+        (2, 3, 25.00),
+        (3, 1, 99.00),
+        (1, 9, 75.00);
     END IF;
 
     IF (SELECT COUNT(*) FROM SocialEvent) = 0 THEN
         INSERT INTO SocialEvent (name, creator, timestamp, street, state, city, ZIP, description) VALUES
-        ('Alumni Meetup', 3, '2024-12-01 18:00:00', '123 Sesame St', 'CA', 'San Jose', '12345', 'An event for alumni to reconnect.');
+        ('Alumni Meetup', 12, '2024-12-01 18:00:00', '123 Sesame St', 'CA', 'San Jose', '12345', 'An event for alumni to reconnect.'),
+        ('Homecoming Dance', 12, '2024-5-01 19:00:00', '7th St', 'CA', 'San Jose', '12345', 'Once a year dance for everyone!'),
+        ('Board Meeting', 15, '2024-12-31 15:00:00', '21st Dorm St', 'CA', 'San Jose', '12345', 'Election for the next commiittee');
+
     END IF;
 
     IF (SELECT COUNT(*) FROM RSVP) = 0 THEN
         INSERT INTO RSVP (user, event) VALUES
-        (2, 1);
+        (6, 1),
+        (9, 1),
+        (2, 2),
+        (3, 2),
+        (12, 2),
+        (5, 2),
+        (11, 3),
+        (12, 3),
+        (13, 3);
     END IF;
 
     IF (SELECT COUNT(*) FROM JobPosting) = 0 THEN
         INSERT INTO JobPosting (creator, URL, description, title) VALUES
-        (3, 'https://example.com/job1', 'Looking for a software engineer intern for summer 2025.', 'Software Engineer Intern'),
-        (2, 'https://example.com/job2', 'Marketing manager position available.', 'Marketing Manager');
+        (11, 'https://example.com/job1', 'Looking for a software engineer intern for summer 2025.', 'Software Engineer Intern'),
+        (12, 'https://example.com/job2', 'Marketing manager position available.', 'Marketing Manager');
     END IF;
 
     COMMIT;

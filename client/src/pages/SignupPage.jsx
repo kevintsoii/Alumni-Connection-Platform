@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import NavBar from '../components/NavBar';
+import { Navigate } from "react-router-dom";
 
 
 const SignupPage = () => {
@@ -15,22 +15,73 @@ const SignupPage = () => {
     gradYear: currentYear.toString(), // Default to current year
     userType: 'Student', // Default to Student
   });
+  const monthMapping = {
+    January: 1,
+    February: 2,
+    March: 3,
+    April: 4,
+    May: 5,
+    June: 6,
+    July: 7,
+    August: 8,
+    September: 9,
+    October: 10,
+    November: 11,
+    December: 12,
+  };
 
+  const [signUp, setSignUp] = useState(false);
   const [error, setError] = useState('');
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password, firstName, lastName, major } = formData;
+    const { email, password, firstName, lastName, major, degreeType, gradMonth, gradYear} = formData;
+    
     if (!email || !password || !firstName || !lastName || !major) {
       setError('Please fill in all the required fields.');
-    } else {
-      setError('');
-      // Handle signup logic here (e.g., API call)
-      console.log('Signing up with', formData);
+      return;
+    } 
+    // API call to create a new user
+    try {
+      const response = await fetch("http://localhost:8000/register/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          first: firstName,
+          last: lastName,
+          major: major,
+          degree: degreeType,
+          gradYear: parseInt(gradYear), 
+          gradMonth: monthMapping[gradMonth]
+        }),
+      });
+      
+      const data = await response.json();
+
+      if (data.token) {
+        setError("");
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("permission_level", data.permission_level);
+        setSignUp(true);
+      } else if (data.error) {
+        setError(data.error);
+      } else {
+        setError("An error occurred. Please try again.");
+      }
+    } catch (error) {
+      console.error("Login failed:", error.message);
     }
   };
 
+  if (signUp) {
+    return <Navigate to="/alumni" />;
+  }
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
