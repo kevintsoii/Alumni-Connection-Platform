@@ -157,33 +157,24 @@ BEGIN
 
     IF (SELECT COUNT(*) FROM Connection) = 0 THEN
         INSERT INTO Connection (user1, user2) VALUES
-        (1, 2),
-        (2, 1),
-        (2, 3),
-        (4, 5),
-        (5, 4),
-        (6, 9),
+        (1, 6),
         (6, 1),
-        (6, 3),
-        (1, 5),
         (1, 7),
-        (7, 2),
-        (8, 6),
-        (8, 5),
-        (8, 7),
-        (8, 1),
-        (9, 8),
-        (9, 5),
-        (9, 3);
+        (1, 8),
+        (1, 9),
+        (2, 10),
+        (2, 9),
+        (2, 8),
+        (3, 6),
+        (4, 7),
+        (7, 4);
     END IF;
 
     IF (SELECT COUNT(*) FROM AlumniWall) = 0 THEN
         INSERT INTO AlumniWall (user, company, industry) VALUES
         (6, 'Chase', 'Banking'),
         (7, 'Google', 'Technology'),
-        (8, 'Pfizer', 'Biology'),
-        (9, 'Tesla', 'Automobile'),
-        (10, 'AECOM', 'Construction');
+        (8, 'Pfizer', 'Biology');
     END IF;
 
     IF (SELECT COUNT(*) FROM AlumniContact) = 0 THEN
@@ -194,9 +185,7 @@ BEGIN
         (7, 'https://instagram.com/taylorwalker'),
         (7, 'https://linkedin.com/taylorwalker'),
         (7, 'https://github.com/taylorwalker'),
-        (8, 'https://instagram.com/eddieyoung'),
-        (9, 'https://youtube.com/alexadams'),
-        (10, 'https://x.com/caseylee');
+        (8, 'https://instagram.com/eddieyoung');
     END IF;
 
     IF (SELECT COUNT(*) FROM Post) = 0 THEN
@@ -217,7 +206,7 @@ BEGIN
         INSERT INTO Media (post, URL, type) VALUES
         (1, 'https://example.com/image1.jpg', 'photo'),
         (2, 'https://example.com/video1.mp4', 'video'),
-        (5, 'https://example.com/gif1.mp4', 'gif'),
+        (5, 'https://example.com/gif1.mp4', 'url'),
         (7, 'https://example.com/image7.mp4', 'photo'),
         (7, 'https://example.com/video7.mp4', 'video'),
         (8, 'https://example.com/video8.mp4', 'video'),
@@ -264,7 +253,7 @@ BEGIN
     IF (SELECT COUNT(*) FROM Fundraiser) = 0 THEN
         INSERT INTO Fundraiser (creator, goal, description, ends, name) VALUES
         (11, 1234.00, 'Raising funds for an AI video surveillance camera.', '2024-12-2', 'AI Research'),
-        (13, 2500.00, 'Raising funds for a better SRAC.', '2025-2-30', 'Gym'),
+        (13, 2500.00, 'Raising funds for a better SRAC.', '2025-02-25', 'Gym'),
         (14, 750.00, 'Raising funds to provide food for the homeless!.', '2024-12-31', 'Food Drive');
     END IF;
 
