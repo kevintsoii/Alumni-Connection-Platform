@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 
 function Profile() {
-  // const token =
-  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJwZXJtaXNzaW9uX2xldmVsIjoic3R1ZGVudCIsImlhdCI6MTczMzI2NjQ3Nn0.L0KfBw6T2jcR0hzm4hro0SamqkY3AQO2ynegbCf42WE";
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProtectedData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/users/3", {
+        const response = await fetch("http://localhost:8000/users/2", {
           method: "GET",
-          mode: "no-cors",
           headers: { Authorization: `${token}` },
-          credentials: "include", // Include cookies in the request
         });
         const data = await response.json();
         console.log("Protected data:", data);
@@ -23,15 +20,12 @@ function Profile() {
   }, []);
 
   const [name, setName] = useState("Kevin Tsoi");
-
   const [gradDate, setGradDate] = useState("2005");
   const [major, setMajor] = useState("Computer Science");
   const [degree, setDegree] = useState("B.S.");
   const [company, setCompany] = useState("IBM");
-
   const [title, setTitle] = useState("Professor");
   const [department, setDepartment] = useState("Departent of Computer Sciece");
-
   const [isPending, setIsPending] = useState(false);
 
   const connectWith = () => {
