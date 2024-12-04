@@ -36,7 +36,7 @@ function FundraisersPage() {
     description: "",
     ends: "",
   });
-  const [donationAmount, setDonationAmount] = useState("");
+  const [donationAmount, setDonationAmount] = useState({});
 
   const handleCreateFundraiser = () => {
     if (
@@ -62,7 +62,7 @@ function FundraisersPage() {
   };
 
   const handleDonate = (id) => {
-    if (donationAmount.trim() !== "" && parseFloat(donationAmount) > 0) {
+    if (donationAmount[id] && parseFloat(donationAmount[id]) > 0) {
       setFundraisers((prevFundraisers) =>
         prevFundraisers.map((fundraiser) =>
           fundraiser.id === id
@@ -70,13 +70,13 @@ function FundraisersPage() {
                 ...fundraiser,
                 donations: [
                   ...fundraiser.donations,
-                  { user: "Anonymous", amount: parseFloat(donationAmount) },
+                  { user: "Anonymous", amount: parseFloat(donationAmount[id]) },
                 ],
               }
             : fundraiser
         )
       );
-      setDonationAmount("");
+      setDonationAmount((prev) => ({ ...prev, [id]: "" }));
     }
   };
 
@@ -155,8 +155,13 @@ function FundraisersPage() {
               <input
                 type="text"
                 placeholder="Donation Amount"
-                value={donationAmount}
-                onChange={(e) => setDonationAmount(e.target.value)}
+                value={donationAmount[fundraiser.id] || ""}
+                onChange={(e) =>
+                  setDonationAmount({
+                    ...donationAmount,
+                    [fundraiser.id]: e.target.value,
+                  })
+                }
                 className="bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button

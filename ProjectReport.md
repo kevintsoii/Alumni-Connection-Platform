@@ -211,6 +211,9 @@ There is no change from the 1NF design.
 ## Major Design Decisions
 We used indexing and transactions
 
+We decided to make Events, Jobs and Fundraising separate from Posts, which were combined in the beginning. This design decision was impactful because it reduces redundancies and dependencies compared to if there were all categorized as posts. Designing it this way in the beginning also made the normalization process easier, we were able to detect if there were any redundancies quickly. If we kept the original design, we may have come across a lot of difficulties later on.
+
+
 ## Implementation Details
 
 ## Demonstration
