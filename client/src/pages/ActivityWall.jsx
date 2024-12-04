@@ -1,5 +1,4 @@
 import profilePic from "/profilepic.png";
-import UserProfile from "../components/UserProfile";
 import { useState } from "react";
 
 function ActivityWall() {

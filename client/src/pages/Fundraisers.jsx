@@ -1,35 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function FundraisersPage() {
+  const token = localStorage.getItem("token");
   const [userType, setUserType] = useState("staff");
-
-  const [fundraisers, setFundraisers] = useState([
-    {
-      id: 1,
-      name: "Community Center Renovation",
-      goal: 5000.0,
-      description:
-        "Help us renovate our community center to provide better services to our neighborhood!",
-      ends: "2024-12-31",
-      donations: [
-        { user: "Alice", amount: 100 },
-        { user: "Bob", amount: 50 },
-      ],
-    },
-    {
-      id: 2,
-      name: "School Supplies for Kids",
-      goal: 3000.0,
-      description:
-        "We are raising funds to provide school supplies to underprivileged children.",
-      ends: "2024-11-30",
-      donations: [
-        { user: "Charlie", amount: 150 },
-        { user: "David", amount: 75 },
-      ],
-    },
-  ]);
-
+  const [fundraisers, setFundraisers] = useState([]);
+  const [loading, setLoading] = useState(true); // Track loading state
   const [newFundraiser, setNewFundraiser] = useState({
     name: "",
     goal: "",
@@ -37,29 +12,75 @@ function FundraisersPage() {
     ends: "",
   });
   const [donationAmount, setDonationAmount] = useState({});
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleCreateFundraiser = () => {
+  // fetch fundraisers from API
+  useEffect(() => {
+    const fetchFundraisers = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/fundraisers/", {
+          method: "GET",
+          headers: { Authorization: `${token}` },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFundraisers(data.fundraisers);
+        } else {
+          setError("Failed to fetch fundraisers. Status: " + response.status);
+        }
+      } catch (error) {
+        setError("Error fetching fundraisers: " + error.message);
+      } finally {
+      }
+    };
+
+    fetchFundraisers();
+  }, []);
+
+  // create new fundraiser
+  const handleCreateFundraiser = async () => {
     if (
       newFundraiser.name.trim() !== "" &&
       newFundraiser.goal.trim() !== "" &&
       newFundraiser.description.trim() !== "" &&
       newFundraiser.ends.trim() !== ""
     ) {
-      const newEntry = {
-        ...newFundraiser,
-        id: fundraisers.length + 1,
-        goal: parseFloat(newFundraiser.goal),
-        donations: [],
-      };
-      setFundraisers([newEntry, ...fundraisers]);
-      setNewFundraiser({
-        name: "",
-        goal: "",
-        description: "",
-        ends: "",
-      });
+      try {
+        const payload = {
+          name: newFundraiser.name,
+          goal: parseFloat(newFundraiser.goal),
+          description: newFundraiser.description,
+          ends: newFundraiser.ends,
+        };
+
+        const response = await fetch("http://localhost:8000/fundraisers/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+          const createdFundraiser = await response.json();
+          setFundraisers([createdFundraiser, ...fundraisers]);
+          setNewFundraiser({ name: "", goal: "", description: "", ends: "" });
+          setSuccessMessage("Fundraiser created successfully!");
+        } else {
+          const errorData = await response.json();
+          setError(errorData.detail || "Failed to create fundraiser.");
+        }
+      } catch (error) {
+        console.error("Error creating fundraiser:", error);
+        setError("An error occurred while creating the fundraiser.");
+      }
+    } else {
+      setError("All fields are required.");
     }
   };
+  
 
   const handleDonate = (id) => {
     if (donationAmount[id] && parseFloat(donationAmount[id]) > 0) {
@@ -142,12 +163,12 @@ function FundraisersPage() {
 
         {fundraisers.map((fundraiser) => (
           <div
-            key={fundraiser.id}
+            key={fundraiser.fundraiserID}
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
           >
             <h3 className="font-semibold text-xl">{fundraiser.name}</h3>
             <p className="text-gray-500 mt-2">
-              Goal: ${fundraiser.goal.toFixed(2)}
+              Goal: ${parseFloat(fundraiser.goal).toFixed(2)}
             </p>
             <p className="text-gray-500">{fundraiser.description}</p>
             <p className="text-gray-500">Ends: {fundraiser.ends}</p>
@@ -171,7 +192,8 @@ function FundraisersPage() {
                 Donate
               </button>
             </div>
-            {fundraiser.donations.length > 0 && (
+            {/* FIX THIS SO THAT PEOPLE CAN DONATE */}
+            {/* {fundraiser.donations.length > 0 && (
               <div className="mt-4">
                 <h4 className="font-semibold">Top Donations:</h4>
                 {fundraiser.donations
@@ -183,7 +205,7 @@ function FundraisersPage() {
                     </p>
                   ))}
               </div>
-            )}
+            )} */}
           </div>
         ))}
       </div>

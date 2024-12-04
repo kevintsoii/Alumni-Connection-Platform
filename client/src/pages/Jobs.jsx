@@ -1,60 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function JobsPage() {
-  const [userType, setUserType] = useState("staff");
-  const [jobs, setJobs] = useState([
-    {
-      id: 1,
-      title: "Software Engineer",
-      URL: "https://techcorp.com/job1",
-      description:
-        "We are looking for a passionate Software Engineer to join our team.",
-    },
-    {
-      id: 2,
-      title: "Project Manager",
-      URL: "https://bizcorp.com/job2",
-      description:
-        "Experienced Project Manager needed for overseeing key client projects.",
-    },
-    {
-      id: 3,
-      title: "Data Analyst",
-      URL: "https://datacorp.com/job3",
-      description:
-        "Seeking a skilled Data Analyst to work with large datasets and derive insights.",
-    },
-  ]);
+  const token = localStorage.getItem("token");
+  const userType = localStorage.getItem("permission_level");
 
+  const [jobs, setJobs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [newJob, setNewJob] = useState({
     title: "",
-    URL: "",
+    url: "",
     description: "",
   });
 
-  const handleCreateJob = () => {
-    if (
-      newJob.title.trim() !== "" &&
-      newJob.URL.trim() !== "" &&
-      newJob.description.trim() !== ""
-    ) {
-      const newEntry = {
-        ...newJob,
-        id: jobs.length + 1,
-      };
-      setJobs([newEntry, ...jobs]);
-      setNewJob({
-        title: "",
-        URL: "",
-        description: "",
-      });
-    }
-  };
+  const [error, setError] = useState("");
+  const [wallError, setWallError] = useState("");
 
   const filteredJobs = jobs.filter((job) =>
     job.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/jobs/", {
+          method: "GET",
+          headers: { Authorization: `${token}` },
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+        if (data.error) {
+          setWallError(data.error);
+          if (data.error === "Invalid token") {
+            setWallError("You must be logged in.");
+          }
+        } else {
+          setJobs(data.jobs);
+        }
+      } catch (error) {
+        console.error("Error fetching jobs data:", error);
+      }
+    };
+    fetchJobs();
+  }, []);
+
+  const handleCreateJob = async () => {
+    if (
+      newJob.title.trim() !== "" &&
+      newJob.url.trim() !== "" &&
+      newJob.description.trim() !== ""
+    ) {
+      try {
+        const response = await fetch("http://localhost:8000/jobs/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify(newJob),
+        });
+
+        const data = await response.json();
+
+        if (data.message) {
+          window.location.reload();
+        } else if (data.error) {
+          setError(data.error);
+        }
+      } catch (error) {
+        setError(error.message);
+      }
+    } else {
+      setError("All fields must be filled out!");
+    }
+  };
 
   function renderNewJobForm() {
     if (userType == "staff") {
@@ -71,7 +91,7 @@ function JobsPage() {
             type="text"
             placeholder="Job URL"
             value={newJob.URL}
-            onChange={(e) => setNewJob({ ...newJob, URL: e.target.value })}
+            onChange={(e) => setNewJob({ ...newJob, url: e.target.value })}
             className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
@@ -89,6 +109,8 @@ function JobsPage() {
           >
             Add Job
           </button>
+
+          {error && <p className="text-red-500 text-center my-4">{error}</p>}
         </div>
       );
     }
@@ -98,7 +120,9 @@ function JobsPage() {
     <div className="space-y-4">
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold mb-4">Jobs</h1>
+
         {renderNewJobForm()}
+
         <div className="bg-[#fbfbf9] rounded-lg shadow-md p-4">
           <input
             type="text"
@@ -108,9 +132,14 @@ function JobsPage() {
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+
+        {wallError && (
+          <p className="text-red-500 text-center my-4">{wallError}</p>
+        )}
+
         {filteredJobs.map((job) => (
           <div
-            key={job.id}
+            key={job.jobID}
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
           >
             <h3 className="font-semibold text-xl">{job.title}</h3>
