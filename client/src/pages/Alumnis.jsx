@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 function AlumniWall() {
   const userType = localStorage.getItem("permission_level");
+  const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -40,53 +41,53 @@ function AlumniWall() {
 
   const handleAddAlumni = async () => {
     if (
-      newAlumni.firstName.trim() !== "" &&
-      newAlumni.lastName.trim() !== "" &&
-      newAlumni.gradYear.trim() !== "" &&
-      newAlumni.major.trim() !== "" &&
       newAlumni.company.trim() !== "" &&
-      newAlumni.industry.trim() !== ""
+      newAlumni.industry.trim() !== "" &&
+      newAlumni.contacts.trim() !== ""
     ) {
       try {
-        // Prepare the data to be sent to the server
+        const contactsArray = newAlumni.contacts
+          .split(",")
+          .map((contact) => contact.trim());
+
         const newEntry = {
           company: newAlumni.company,
           industry: newAlumni.industry,
-          contacts: newAlumni.contacts,
+          contacts: contactsArray,
         };
 
-        // Send the POST request to your API
         const response = await fetch("http://localhost:8000/alumni/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${token}`, // Include the token if required by the API
+            Authorization: `${token}`,
           },
-          body: JSON.stringify(newEntry), // Convert the object to JSON
+          body: JSON.stringify(newEntry),
         });
 
-        // Handle the response
-        if (response.ok) {
-          const addedAlumni = await response.json(); // Parse the returned data
+        if (data.message) {
+          const addedAlumni = await response.json();
           console.log("Alumni successfully added:", addedAlumni);
 
-          // Update the local alumni list with the new entry
           setAlumni([addedAlumni, ...alumni]);
 
-          // Clear the form
           setNewAlumni({
             company: "",
             industry: "",
-            contacts: [],
+            contacts: "",
           });
-        } else {
-          console.error("Failed to add alumni:", response.statusText);
+          setError("");
+          window.location.reload();
+        } else if (data.error) {
+          console.error(data.error);
         }
       } catch (error) {
         console.error("Error while adding alumni:", error);
+        setError("You have already been added to the alumni wall!");
       }
     } else {
       console.error("All fields must be filled out!");
+      setError("All fields must be filled out!");
     }
   };
 
@@ -134,7 +135,7 @@ function AlumniWall() {
               placeholder="Contacts"
               value={newAlumni.contacts}
               onChange={(e) =>
-                setNewAlumni({ ...newAlumni, industry: e.target.value })
+                setNewAlumni({ ...newAlumni, contacts: e.target.value })
               }
               className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -146,6 +147,7 @@ function AlumniWall() {
               Add Yourself
             </button>
           </div>
+          {error && <p className="text-red-500 text-center my-4">{error}</p>}
           <hr className="border-1 p-2"></hr>
         </>
       );
