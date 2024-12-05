@@ -39,30 +39,43 @@ function AlumniWall() {
           .includes(searchQuery.industry.toLowerCase()))
   );
 
-  useEffect(() => {
-    const fetchProtectedData = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/alumni/", {
-          method: "GET",
-          headers: { Authorization: `${token}` },
-        });
+  const fetchAlumni = async () => {
+    try {
+      const queryParams = new URLSearchParams();
 
-        const data = await response.json();
+      if (searchQuery.gradYear)
+        queryParams.append("gradYear", searchQuery.gradYear);
+      if (searchQuery.major) queryParams.append("major", searchQuery.major);
+      if (searchQuery.company)
+        queryParams.append("company", searchQuery.company);
+      if (searchQuery.industry)
+        queryParams.append("industry", searchQuery.industry);
 
-        console.log(data);
-        if (data.error) {
-          setWallError(data.error);
-          if (data.error == "Invalid token") {
-            setWallError("You must be logged in.");
-          }
-        } else {
-          setAlumni(data.alumni);
+      const url = `http://localhost:8000/alumni/?${queryParams.toString()}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { Authorization: `${token}` },
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+      if (data.error) {
+        setWallError(data.error);
+        if (data.error == "Invalid token") {
+          setWallError("You must be logged in.");
         }
-      } catch (error) {
-        console.error("Error fetching protected data:", error);
+      } else {
+        setAlumni(data.alumni);
       }
-    };
-    fetchProtectedData();
+    } catch (error) {
+      console.error("Error fetching protected data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAlumni();
   }, []);
 
   const handleAddAlumni = async () => {
@@ -195,6 +208,15 @@ function AlumniWall() {
             }
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+
+          <button
+            className="my-3 py-1 px-2 bg-blue-300 rounded-xl"
+            onClick={() => {
+              fetchAlumni();
+            }}
+          >
+            Search
+          </button>
         </div>
 
         <hr className="border-1 p-2 text-black mt-8"></hr>
@@ -203,7 +225,7 @@ function AlumniWall() {
           <p className="text-red-500 text-center my-4">{wallError}</p>
         )}
 
-        {filteredAlumni.map((alum) => (
+        {alumni.map((alum) => (
           <div
             key={alum.userID}
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4 hover:shadow-xl hover:scale-[101%] transition duration-500 "
