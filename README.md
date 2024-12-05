@@ -31,7 +31,14 @@ Meeting Minutes: [meetingMinutes.md](https://github.com/kevintsoii/Alumni-Connec
    Password: password
    ```
 
-5. Clean Up Docker files
+4. Run custom SQL in CMD line (initial data is automatically added when you run Docker)
+
+   ```
+   docker exec -it mysql mysql -u root -ppassword
+   use spartan_outreach;
+   ```
+
+6. Clean Up Docker files
 
    ```
    docker-compose down -v --rmi all
@@ -39,7 +46,7 @@ Meeting Minutes: [meetingMinutes.md](https://github.com/kevintsoii/Alumni-Connec
 
 ## Division of Work
 
-- Kevin: 
-- Huy:
-- Samson:
-- Marvin:
+- Kevin: Architecture, Docker, SQL statements, Indexing, Django backend, Authentication front-end
+- Huy: Relational DB Design, Normalization, Project Report, Home & Login & Register & Fundraiser front-end
+- Samson: ER, Backend API list, Postman testing APIs, Initial data, Navbar & Routing & Posts & Jobs front-end
+- Marvin: ER constraints, 1NF, front-end design, Presentation and Video Editing, Alumni & Profile & Connections front-end
