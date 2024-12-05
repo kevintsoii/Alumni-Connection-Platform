@@ -16,7 +16,6 @@ urlpatterns = [
     path('contacts/<int:id>/', contact_view, name='get contacts'),
 
     path('posts/', PostView.as_view(), name='get contacts'),
-    path('media/<int:id>/', media_view, name='get media'),
 
     path('likes/<int:id>/', like_view, name='add like'),
 

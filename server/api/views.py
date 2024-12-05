@@ -361,8 +361,18 @@ class PostView(APIView):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                    SELECT postID, user, title, text
-                    FROM Post
+                    SELECT p.postID, p.title, p.text, u.first, u.last,
+                        (
+                            SELECT COUNT(*) 
+                            FROM `Like` l 
+                            WHERE l.post = p.postID
+                        ) AS likes,
+                        GROUP_CONCAT(m.URL) AS media_urls,
+                        GROUP_CONCAT(m.type) AS media_types
+                    FROM Post p
+                    INNER JOIN User u ON p.user = u.userID
+                    LEFT JOIN Media m ON p.postID = m.post
+                    GROUP BY p.postID
                 """)
                 rows = cursor.fetchall()
         except Exception as e:
@@ -371,32 +381,19 @@ class PostView(APIView):
         posts = [
             {
                 "postID": row[0],
-                "user": row[1],
-                "title": row[2],
-                "text": row[3],
+                "title": row[1],
+                "text": row[2],
+                "creator": row[3] + " " + row[4],
+                "likes": row[5],
+                "media": [
+                    {"url": url, "type": type}
+                    for url, type in zip(row[6].split(","), row[7].split(","))
+                ] if row[6] else [],
             }
             for row in rows
         ]
 
         return JsonResponse({"posts": posts}, status=200)
-
-@api_view(['GET'])
-@auth_middleware()
-def media_view(request, id):
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                SELECT URL, type
-                FROM Media
-                WHERE post = %s
-            """, [id])
-            rows = cursor.fetchall()
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-    media = [ {"url": row[0], "type": row[1]} for row in rows ]
-
-    return JsonResponse({"media": media}, status=200)
 
 @api_view(['POST', 'DELETE'])
 @auth_middleware()
@@ -501,9 +498,11 @@ class FundraiserView(APIView):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                    SELECT f.fundraiserID, f.name, f.goal, f.description, f.ends, u.userID, u.first, u.last
+                    SELECT f.fundraiserID, f.name, f.goal, f.description, f.ends,
+                        COALESCE(SUM(d.amount), 0) AS raised
                     FROM Fundraiser f
-                    INNER JOIN User u ON f.creator = u.userID
+                    LEFT JOIN Donation d ON f.fundraiserID = d.fundraiser
+                    GROUP BY f.fundraiserID
                 """)
                 rows = cursor.fetchall()
         except Exception as e:
@@ -516,11 +515,7 @@ class FundraiserView(APIView):
                 "goal": row[2],
                 "description": row[3],
                 "ends": row[4],
-                "creator": {
-                    "userID": row[5],
-                    "first": row[6],
-                    "last": row[7]
-                }
+                "raised": row[5],
             }
             for row in rows
         ]
@@ -560,8 +555,8 @@ class SocialEventView(APIView):
             with connection.cursor() as cursor:
                 cursor.execute("""
                     SELECT e.eventID, e.name, e.timestamp, e.street, e.state, e.city, e.ZIP, e.description,
-                               (SELECT COUNT(*) FROM RSVP r WHERE r.event = e.eventID) AS rsvpCount,
-                               GROUP_CONCAT(CONCAT(u.first, ' ', u.last) SEPARATOR ', ') AS rsvpers
+                        COUNT(r.user) AS rsvpCount,
+                        GROUP_CONCAT(CONCAT(u.first, ' ', u.last) SEPARATOR ', ') AS rsvpers
                     FROM SocialEvent e
                     LEFT JOIN RSVP r ON e.eventID = r.event
                     LEFT JOIN User u ON r.user = u.userID
