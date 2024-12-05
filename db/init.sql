@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS User (
 );
 
 CREATE INDEX idx_user_grad_year ON User(gradYear);
-CREATE INDEX idx_user_major ON User(major);
+CREATE FULLTEXT INDEX idx_user_major ON User(major);
 
 CREATE TABLE IF NOT EXISTS Connection (
     user1 INT,
@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS AlumniWall (
     FOREIGN KEY (user) REFERENCES User(userID) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_alumniwall_company ON AlumniWall(company);
-CREATE INDEX idx_alumniwall_industry ON AlumniWall(industry);
+CREATE FULLTEXT INDEX idx_alumniwall_company ON AlumniWall(company);
+CREATE FULLTEXT INDEX idx_alumniwall_industry ON AlumniWall(industry);
 
 CREATE TABLE IF NOT EXISTS AlumniContact (
     user INT,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS Post (
     FOREIGN KEY (user) REFERENCES User(userID) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_post_title ON Post(title);
+CREATE FULLTEXT INDEX idx_post_title ON Post(title);
 
 CREATE TABLE IF NOT EXISTS Media (
     post INT,
@@ -86,6 +86,8 @@ CREATE TABLE IF NOT EXISTS Fundraiser (
     FOREIGN KEY (creator) REFERENCES User(userID) ON DELETE CASCADE
 );
 
+CREATE INDEX ids_fundraiser_ends ON Fundraiser(ends);
+
 CREATE TABLE IF NOT EXISTS Donation (
     donationID INT PRIMARY KEY AUTO_INCREMENT,
     fundraiser INT NOT NULL,
@@ -94,6 +96,8 @@ CREATE TABLE IF NOT EXISTS Donation (
     FOREIGN KEY (fundraiser) REFERENCES Fundraiser(fundraiserID) ON DELETE CASCADE,
     FOREIGN KEY (user) REFERENCES User(userID) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_donation_amount ON Donation(amount);
 
 CREATE TABLE IF NOT EXISTS SocialEvent (
     eventID INT PRIMARY KEY AUTO_INCREMENT,
@@ -107,6 +111,8 @@ CREATE TABLE IF NOT EXISTS SocialEvent (
     description TEXT,
     FOREIGN KEY (creator) REFERENCES User(userID) ON DELETE CASCADE
 );
+
+CREATE INDEX ids_event_timestamp ON SocialEvent(timestamp);
 
 CREATE TABLE IF NOT EXISTS RSVP (
     user INT NOT NULL,
@@ -125,7 +131,7 @@ CREATE TABLE IF NOT EXISTS JobPosting (
     FOREIGN KEY (creator) REFERENCES User(userID) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_job_title ON JobPosting(title);
+CREATE FULLTEXT INDEX idx_job_title ON JobPosting(title);
 
 DELIMITER //
 
@@ -152,7 +158,11 @@ BEGIN
         ('staff2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Mary', 'Johnson', 'Civil Engineering', 'PhD', 6, 2004, 'staff', 'Engineering', 'Researcher'),
         ('staff3@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'David', 'Hall', 'Chemistry', 'BS', 6, 2005, 'staff', 'Humanities', 'Administrator'),
         ('staff4@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Riley', 'Adams', 'Physics', 'BS', 5, 1999, 'staff', 'Mathematics', 'Administrator'),
-        ('staff5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Emma', 'Walker', 'Biology', 'PhD', 5, 2005, 'staff', 'Science', 'Lab Assistant');
+        ('staff5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Emma', 'Walker', 'Biology', 'PhD', 5, 2005, 'staff', 'Science', 'Lab Assistant'),
+        
+        ('student6@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Emily', 'Tao', 'Computer Science', 'PhD', 12, 2029, 'student', NULL, NULL),
+        ('alumni6@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Johnny', 'Grant', 'Mathematics', 'BS', 5, 2022, 'alumni', NULL, NULL),
+        ('staff6@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Alvin', 'Kerr', 'Communications', 'PhD', 5, 2005, 'staff', 'Communications', 'Director');
     END IF;
 
     IF (SELECT COUNT(*) FROM Connection) = 0 THEN

@@ -394,6 +394,11 @@ function ActivityWall() {
             onChange={(e) => {
               setSearchQuery(e.target.value);
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchPosts();
+              }
+            }}
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button

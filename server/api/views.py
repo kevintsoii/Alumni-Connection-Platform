@@ -301,14 +301,14 @@ class AlumniView(APIView):
                 conditions.append("u.gradYear = %s")
                 params.append(grad_year)
             if major:
-                conditions.append("LOWER(u.major) LIKE LOWER(%s)")
-                params.append(f"%{major}%")
+                conditions.append("MATCH(u.major) AGAINST(%s IN BOOLEAN MODE)")
+                params.append(f'{major}*')
             if company:
-                conditions.append("LOWER(a.company) LIKE LOWER(%s)")
-                params.append(f"%{company}%")
+                conditions.append("MATCH(a.company) AGAINST(%s IN BOOLEAN MODE)")
+                params.append(f'{company}*')
             if industry:
-                conditions.append("LOWER(a.industry) LIKE LOWER(%s)")
-                params.append(f"%{industry}%")
+                conditions.append("MATCH(a.industry) AGAINST(%s IN BOOLEAN MODE)")
+                params.append(f'{industry}*')
 
             if conditions:
                 query += " WHERE " + " AND ".join(conditions)
@@ -409,6 +409,7 @@ class PostView(APIView):
                         INNER JOIN User u ON p.user = u.userID
                         LEFT JOIN Media m ON p.postID = m.post
                         GROUP BY p.postID
+                        ORDER BY p.postID DESC
                     """)
                     rows = cursor.fetchall()
                 else:
@@ -424,9 +425,10 @@ class PostView(APIView):
                         FROM Post p
                         INNER JOIN User u ON p.user = u.userID
                         LEFT JOIN Media m ON p.postID = m.post
-                        WHERE LOWER(p.title) LIKE LOWER(%s)
+                        WHERE MATCH(p.title) AGAINST(%s IN BOOLEAN MODE)
                         GROUP BY p.postID
-                    """, [f"%{search_query}%"])
+                        ORDER BY p.postID DESC
+                    """, [f'{search_query}*'])
                     rows = cursor.fetchall()
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
@@ -445,7 +447,6 @@ class PostView(APIView):
             }
             for row in rows
         ]
-        posts.reverse()
 
         return JsonResponse({"posts": posts}, status=200)
 
@@ -534,7 +535,7 @@ class FundraiserView(APIView):
         ends = data.get("ends")
         creator = request.session["id"]
 
-        if not all([name, goal, ends]):
+        if not all([name, ends]):
             return JsonResponse({"error": "Missing required fields"}, status=400)
 
         try:
@@ -558,6 +559,7 @@ class FundraiserView(APIView):
                     FROM Fundraiser f
                     LEFT JOIN Donation d ON f.fundraiserID = d.fundraiser
                     GROUP BY f.fundraiserID
+                    ORDER BY f.ends
                 """)
                 rows = cursor.fetchall()
         except Exception as e:
@@ -615,7 +617,8 @@ class SocialEventView(APIView):
                     FROM SocialEvent e
                     LEFT JOIN RSVP r ON e.eventID = r.event
                     LEFT JOIN User u ON r.user = u.userID
-                    GROUP BY e.eventID;
+                    GROUP BY e.eventID
+                    ORDER BY e.timestamp DESC;
                 """)
                 rows = cursor.fetchall()
         except Exception as e:
@@ -636,7 +639,6 @@ class SocialEventView(APIView):
             }
             for row in rows
         ]
-        events.sort(key=lambda x: x["timestamp"], reverse=True)
 
         return JsonResponse({"events": events}, status=200)
 
@@ -673,8 +675,8 @@ class JobView(APIView):
                     cursor.execute("""
                         SELECT j.jobID, j.title, j.URL, j.description
                         FROM JobPosting j
-                        WHERE LOWER(j.title) LIKE LOWER(%s)
-                    """, [f"%{search_query}%"])
+                        WHERE MATCH(j.title) AGAINST(%s IN BOOLEAN MODE);
+                    """, [f'{search_query}*'])
                 else:
                     cursor.execute("""
                         SELECT j.jobID, j.title, j.URL, j.description
@@ -704,8 +706,8 @@ class DonationView(APIView):
         amount = data.get("amount")
         user = request.session["id"]
 
-        if not all([amount]):
-            return JsonResponse({"error": "Missing required fields"}, status=400)
+        if not all([amount]) or amount <= 0:
+            return JsonResponse({"error": "Invalid fields provided"}, status=400)
 
         try:
             with connection.cursor() as cursor:
@@ -727,6 +729,7 @@ class DonationView(APIView):
                     FROM Donation d
                     INNER JOIN User u ON d.user = u.userID
                     WHERE d.fundraiser = %s
+                    ORDER BY d.amount DESC
                 """, [id])
                 rows = cursor.fetchall()
         except Exception as e:

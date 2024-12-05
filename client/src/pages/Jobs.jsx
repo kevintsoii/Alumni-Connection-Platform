@@ -92,7 +92,7 @@ function JobsPage() {
           <input
             type="text"
             placeholder="Job URL"
-            value={newJob.URL}
+            value={newJob.url}
             onChange={(e) => setNewJob({ ...newJob, url: e.target.value })}
             className="flex-grow bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -132,6 +132,11 @@ function JobsPage() {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchJobs();
+              }
             }}
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />

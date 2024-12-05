@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function FundraisersPage() {
   const token = localStorage.getItem("token");
@@ -14,8 +14,7 @@ function FundraisersPage() {
   const [donationAmount, setDonationAmount] = useState({});
   const [donationsByFundraiser, setDonationsByFundraiser] = useState({});
 
-  const [successMessage, setSuccessMessage] = useState("");
-  const [accessError, setAccesError] = useState("");
+  const [accessError, setAccessError] = useState("");
 
   // fetch fundraisers from API
   useEffect(() => {
@@ -26,17 +25,18 @@ function FundraisersPage() {
           headers: { Authorization: `${token}` },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setFundraisers(data.fundraisers);
+        const data = await response.json();
+
+        if (data.error) {
+          setAccessError(data.error);
+          if (data.error == "Invalid token") {
+            setAccessError("You must be logged in.");
+          }
         } else {
-          setAccesError(
-            "Failed to fetch fundraisers. Status: " + response.status
-          );
-          setAccesError("You must be logged in.");
+          setFundraisers(data.fundraisers);
         }
       } catch (error) {
-        setAccesError("Error fetching fundraisers: " + error.message);
+        setAccessError("Error fetching fundraisers: " + error.message);
       }
     };
 
@@ -54,26 +54,22 @@ function FundraisersPage() {
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(
-          `Donations for fundraiser ${fundraiserID}:`,
-          data.donations
-        ); // Debugging
+      const data = await response.json();
+
+      if (data.error) {
+        setAccessError(data.error);
+      } else {
         setDonationsByFundraiser((prev) => ({
           ...prev,
           [fundraiserID]: data.donations,
         }));
-      } else {
-        console.error(
-          `Failed to fetch donations for fundraiser ${fundraiserID}. Status: ${response.status}`
-        );
       }
     } catch (error) {
       console.error(
         `Error fetching donations for fundraiser ${fundraiserID}:`,
         error
       );
+      setAccessError("Error fetching donations for fundraiser.");
     }
   };
 
@@ -86,16 +82,11 @@ function FundraisersPage() {
 
   // create new fundraiser
   const handleCreateFundraiser = async () => {
-    if (
-      newFundraiser.name.trim() !== "" &&
-      newFundraiser.goal.trim() !== "" &&
-      newFundraiser.description.trim() !== "" &&
-      newFundraiser.ends.trim() !== ""
-    ) {
+    if (newFundraiser.name.trim() !== "" && newFundraiser.ends.trim() !== "") {
       try {
         const payload = {
           name: newFundraiser.name,
-          goal: parseFloat(newFundraiser.goal),
+          goal: parseFloat(newFundraiser.goal) || 0,
           description: newFundraiser.description,
           ends: newFundraiser.ends,
         };
@@ -104,25 +95,23 @@ function FundraisersPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `${token}`,
           },
           body: JSON.stringify(payload),
         });
 
-        if (response.ok) {
-          const createdFundraiser = await response.json();
-          setFundraisers([createdFundraiser, ...fundraisers]);
-          setNewFundraiser({ name: "", goal: "", description: "", ends: "" });
-          setSuccessMessage("Fundraiser created successfully!");
+        const data = await response.json();
+
+        if (data.error) {
+          setAccessError(data.error);
         } else {
-          const errorData = await response.json();
-          setAccesError(errorData.detail || "Failed to create fundraiser.");
+          window.location.reload();
         }
       } catch (error) {
-        console.error("Error creating fundraiser:", error);
-        setAccesError("An error occurred while creating the fundraiser.");
+        setAccessError(error);
       }
     } else {
-      setAccesError("All fields are required.");
+      setAccessError("All fields are required.");
     }
   };
 
@@ -203,36 +192,19 @@ function FundraisersPage() {
           }
         );
 
-        if (response.ok) {
-          const donationResponse = await response.json();
-          console.log("Donation successful:", donationResponse);
+        const data = await response.json();
 
-          // update donationsByFundraiser to reflect the new donation
-          setDonationsByFundraiser((prev) => {
-            const updatedDonations = prev[fundraiserID]
-              ? [...prev[fundraiserID], donationResponse]
-              : [donationResponse];
-
-            return { ...prev, [fundraiserID]: updatedDonations };
-          });
-
-          // clear the input field
-          setDonationAmount((prev) => ({ ...prev, [fundraiserID]: "" }));
-
-          // refresh page after successful donation (fixed white screen bug)
-          window.location.reload();
-        } else {
-          const errorData = await response.json();
-          console.error(
-            "Failed to donate:",
-            errorData.detail || response.statusText
-          );
+        if (data.error) {
+          setAccessError(data.error);
+          return;
         }
+
+        window.location.reload();
       } catch (error) {
-        console.error("Error during donation:", error.message);
+        setAccessError(error);
       }
     } else {
-      console.error("Invalid donation amount.");
+      setAccessError("Invalid donation amount.");
     }
   };
 
@@ -258,26 +230,8 @@ function FundraisersPage() {
             <p className="text-green-700 font-semibold">
               Total Raised: ${fundraiser.raised}
             </p>
-            <p className="text-gray-500">
-              Description: {fundraiser.description}
-            </p>
             <p className="text-gray-500">Ends: {fundraiser.ends}</p>
-
-            {donationsByFundraiser[fundraiser.fundraiserID]?.length > 0 ? (
-              <div className="mt-4">
-                <h4 className="font-semibold">Donations:</h4>
-                {donationsByFundraiser[fundraiser.fundraiserID].map(
-                  (donation) => (
-                    <p key={donation.donationID} className="text-gray-500">
-                      {donation.user.first} {donation.user.last}: $
-                      {parseFloat(donation.amount).toFixed(2)}
-                    </p>
-                  )
-                )}
-              </div>
-            ) : (
-              <p className="text-gray-500 mt-2">No donations yet.</p>
-            )}
+            <p className="text-black">{fundraiser.description}</p>
 
             <div className="mt-4">
               <input
@@ -298,6 +252,24 @@ function FundraisersPage() {
               >
                 Donate
               </button>
+            </div>
+
+            <div className="mt-4">
+              <h4 className="font-semibold">Donations:</h4>
+              {donationsByFundraiser[fundraiser.fundraiserID]?.length > 0 ? (
+                <div className="grid grid-cols-3">
+                  {donationsByFundraiser[fundraiser.fundraiserID].map(
+                    (donation) => (
+                      <p key={donation.donationID} className="text-gray-500">
+                        {donation.user.first} {donation.user.last}: $
+                        {parseFloat(donation.amount).toFixed(2)}
+                      </p>
+                    )
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-500">No donations yet.</p>
+              )}
             </div>
           </div>
         ))}

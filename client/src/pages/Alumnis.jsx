@@ -23,22 +23,6 @@ function AlumniWall() {
     contacts: "",
   });
 
-  const filteredAlumni = alumni.filter(
-    (alum) =>
-      (searchQuery.gradYear === "" ||
-        alum.gradYear === parseInt(searchQuery.gradYear)) &&
-      (searchQuery.major === "" ||
-        alum.major.toLowerCase().includes(searchQuery.major.toLowerCase())) &&
-      (searchQuery.company === "" ||
-        alum.company
-          .toLowerCase()
-          .includes(searchQuery.company.toLowerCase())) &&
-      (searchQuery.industry === "" ||
-        alum.industry
-          .toLowerCase()
-          .includes(searchQuery.industry.toLowerCase()))
-  );
-
   const fetchAlumni = async () => {
     try {
       const queryParams = new URLSearchParams();
@@ -179,6 +163,11 @@ function AlumniWall() {
             onChange={(e) =>
               setSearchQuery({ ...searchQuery, gradYear: e.target.value })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchAlumni();
+              }
+            }}
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
           <input
@@ -188,6 +177,11 @@ function AlumniWall() {
             onChange={(e) =>
               setSearchQuery({ ...searchQuery, major: e.target.value })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchAlumni();
+              }
+            }}
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
           <input
@@ -197,6 +191,11 @@ function AlumniWall() {
             onChange={(e) =>
               setSearchQuery({ ...searchQuery, company: e.target.value })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchAlumni();
+              }
+            }}
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           />
           <input
@@ -206,6 +205,11 @@ function AlumniWall() {
             onChange={(e) =>
               setSearchQuery({ ...searchQuery, industry: e.target.value })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchAlumni();
+              }
+            }}
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
