@@ -254,7 +254,7 @@ class AlumniView(APIView):
         contacts = data.get("contacts", [])
         user = request.session["id"]
 
-        if not company or not industry or len(contacts) > 3:
+        if not company or not industry or len(contacts) > 5:
             return JsonResponse({"error": "Field validation error"}, status=400)
 
         try:
@@ -359,10 +359,10 @@ class PostView(APIView):
         data = json.loads(request.body)
         title = data.get("title")
         text = data.get("text")
-        medias = contacts = data.get("medias", [])
+        medias = data.get("medias", [])
         user = request.session["id"]
 
-        if not title or not text or len(medias) > 3:
+        if not title or not text or len(medias) > 5:
             return JsonResponse({"error": "Error validating fields"}, status=400)
 
         try:
@@ -387,7 +387,7 @@ class PostView(APIView):
                 cursor.execute("ROLLBACK;")
             return JsonResponse({"error": str(e)}, status=500)
         
-        return JsonResponse({"message": "Added to posts!"})
+        return JsonResponse({"message": "Added to posts!", "test": medias})
     
     @method_decorator(auth_middleware())
     def get(self, request):
@@ -445,6 +445,7 @@ class PostView(APIView):
             }
             for row in rows
         ]
+        posts.reverse()
 
         return JsonResponse({"posts": posts}, status=200)
 
@@ -505,7 +506,8 @@ class CommentView(APIView):
                     SELECT c.comment, u.userID, u.first, u.last
                     FROM Comment c                               
                     INNER JOIN User u ON c.user = u.userID
-                """)
+                    WHERE c.post = %s
+                """, [id])
                 rows = cursor.fetchall()
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
@@ -634,6 +636,7 @@ class SocialEventView(APIView):
             }
             for row in rows
         ]
+        events.sort(key=lambda x: x["timestamp"], reverse=True)
 
         return JsonResponse({"events": events}, status=200)
 

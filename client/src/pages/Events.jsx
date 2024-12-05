@@ -251,9 +251,9 @@ function EventsPage() {
               <span className="font-medium">Attendees: </span>
               {event.rsvpCount}
             </p>
-            <p className="text-gray-600">
+            <p className="text-blue-500">
               <span className="font-medium">Date & Time: </span>
-              {event.timestamp}
+              {new Date(event.timestamp).toLocaleString()}
             </p>
             {(event.street || event.city || event.state || event.ZIP) && (
               <p className="text-gray-600">
@@ -279,31 +279,31 @@ function EventsPage() {
               >
                 {rsvps?.includes(event.eventID) ? "Cancel RSVP" : "RSVP"}
               </button>
-            </div>
 
-            {event.rsvpers?.length > 0 && (
-              <div className="mt-3">
-                <button
-                  onClick={() => toggleDropdown(event.eventID)}
-                  className={`my-2 ${
-                    isOpen[event.eventID]
-                      ? "bg-gray-300 py-1 px-2 rounded-lg"
-                      : ""
-                  }`}
-                >
-                  {isOpen[event.eventID] ? "Hide" : "Show Attendees"}
-                </button>
-                {isOpen[event.eventID] && (
-                  <div className="border-gray-300 grid grid-cols-3 ">
-                    {event.rsvpers.map((rsvp, index) => (
-                      <p key={index} className="text-gray-700">
-                        {rsvp}
-                      </p>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+              {event.rsvpers?.length > 0 && (
+                <div className="mt-3">
+                  <button
+                    onClick={() => toggleDropdown(event.eventID)}
+                    className={`my-2 ${
+                      isOpen[event.eventID]
+                        ? "bg-gray-300 py-1 px-2 rounded-lg"
+                        : ""
+                    }`}
+                  >
+                    {isOpen[event.eventID] ? "Hide" : "Show Attendees"}
+                  </button>
+                  {isOpen[event.eventID] && (
+                    <div className="border-gray-300 grid grid-cols-3 ">
+                      {event.rsvpers.map((rsvp, index) => (
+                        <p key={index} className="text-gray-700">
+                          {rsvp}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
