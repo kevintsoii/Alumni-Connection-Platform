@@ -46,3 +46,9 @@
 - Huy: report goals & overview
 - Samson: write out Functional Requirements
 - Marvin: write out our architecture design, realized to transfer documents to github
+
+## December 3, 7:00pm - 8:30pm
+- Kevin: Connected login and alumni frontends to backend endpoints
+- Huy: Connected signup and fundraiser frontends to backend endpoints
+- Samson: Connected job frontend to backend endpoints, updated navbar
+- Marvin: Implemented connections between users, routed alumni wall to profiles
