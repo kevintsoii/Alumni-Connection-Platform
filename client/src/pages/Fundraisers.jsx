@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 
 function FundraisersPage() {
   const token = localStorage.getItem("token");
@@ -13,6 +13,7 @@ function FundraisersPage() {
   });
   const [donationAmount, setDonationAmount] = useState({});
   const [donationsByFundraiser, setDonationsByFundraiser] = useState({});
+
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [accessError, setAccesError] = useState("");
@@ -179,12 +180,53 @@ function FundraisersPage() {
   }
 
   // handle donation submission
-  const handleDonate = (fundraiserID) => {
-    if (donationAmount[fundraiserID] && parseFloat(donationAmount[fundraiserID]) > 0) {
-      setDonationAmount((prev) => ({ ...prev, [fundraiserID]: "" }));
-      // TODO: connect it to donations POST api
+  const handleDonate = async (fundraiserID) => {
+    const donationValue = donationAmount[fundraiserID];
+
+  if (donationValue && parseFloat(donationValue) > 0) {
+    try {
+      const payload = {
+        amount: parseFloat(donationValue), 
+      };
+
+      const response = await fetch(`http://localhost:8000/donations/${fundraiserID}/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`, 
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const donationResponse = await response.json();
+        console.log("Donation successful:", donationResponse);
+
+        // update donationsByFundraiser to reflect the new donation
+        setDonationsByFundraiser((prev) => {
+          const updatedDonations = prev[fundraiserID]
+            ? [...prev[fundraiserID], donationResponse]
+            : [donationResponse];
+
+          return { ...prev, [fundraiserID]: updatedDonations };
+        });
+
+        // clear the input field
+        setDonationAmount((prev) => ({ ...prev, [fundraiserID]: "" }));
+
+        // refresh page after successful donation (fixed white screen bug)
+        window.location.reload();
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to donate:", errorData.detail || response.statusText);
+      }
+    } catch (error) {
+      console.error("Error during donation:", error.message);
     }
-  };
+  } else {
+    console.error("Invalid donation amount.");
+  }
+};
 
   return (
     <div className="space-y-4">
