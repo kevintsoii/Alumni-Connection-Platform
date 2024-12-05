@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/spartan-logo.png";
 
 function NavBar() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -15,6 +16,7 @@ function NavBar() {
     localStorage.removeItem("token");
     localStorage.removeItem("permission_level");
     setIsLoggedIn(false);
+    navigate("/");
   };
 
   return (
@@ -27,7 +29,7 @@ function NavBar() {
             </NavLink>
             <div className="ml-10 flex items-baseline space-x-4">
               <NavLink to="/posts" active={location.pathname === "/posts"}>
-                Home
+                Activity Wall
               </NavLink>
               <NavLink to="/jobs" active={location.pathname === "/jobs"}>
                 Jobs
