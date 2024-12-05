@@ -9,6 +9,7 @@ import EventsPage from "./pages/Events";
 import FundraisersPage from "./pages/Fundraisers";
 import Profile from "./pages/Profile";
 import AlumnisPage from "./pages/Alumnis";
+import Connections from "./pages/Connections";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/fundraisers" element={<FundraisersPage />} />
             <Route path="/profile/:userID" element={<Profile />} />
             <Route path="/alumni" element={<AlumnisPage />} />
+            <Route path="/connections" element={<Connections />} />
           </Routes>
         </main>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 function Profile() {
+  
   const { userID } = useParams();
 
   const token = localStorage.getItem("token");
@@ -176,7 +177,7 @@ function Profile() {
               <circle cx="10" cy="8" r="5" />
               <path d="m16 19 2 2 4-4" />
             </svg>
-            <span>Connect Back </span>
+            <span>Connect Back</span>
           </>
         </button>
       );
@@ -217,7 +218,7 @@ function Profile() {
 
   return (
     <div className="">
-      <div className="flex relative rounded-lg max-w-7xl mx-auto grid p-16 gap-16 bg-white">
+      <div className="relative rounded-lg max-w-7xl mx-auto grid p-16 gap-16 bg-white">
         <div className="absolute inset-0 z-0 w-full h-40 rounded-t-lg bg-gradient-to-r from-[#2D2790] via-[#090979] to-[#00B6DB]"></div>
 
         <div className="relative z-10 top-8 rounded-full border-white border-4 bg-gray-200 w-32 h-32">

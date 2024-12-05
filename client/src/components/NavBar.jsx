@@ -44,6 +44,7 @@ function NavBar() {
               <NavLink to="/alumni" active={location.pathname === "/alumni"}>
                 Alumni
               </NavLink>
+              <NavLink to="/connections" active={location.pathname ==="/connections"}>My Connections</NavLink>
             </div>
           </div>
 
