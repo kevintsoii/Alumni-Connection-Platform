@@ -5,6 +5,7 @@ import userIcon from "/users.svg";
 function Connections() {
   const token = localStorage.getItem("token");
   const [connections, setConnections] = useState([]);
+  const [user, setUser] = useState("");
 
   const [error, setError] = useState(null);
 
@@ -17,8 +18,7 @@ function Connections() {
         });
 
         const data = await response.json();
-        console.log("API Response:", data);
-
+        setUser(data.user);
         setConnections(data.connections || []);
       } catch (error) {
         console.error("Error fetching connections:", error);
@@ -32,15 +32,19 @@ function Connections() {
   return (
     <div className="flex items-center justify-center p-4">
       <div className="container bg-white rounded-lg shadow-md p-6 space-y-6 max-w-4xl w-full">
-        <div className="flex items-center justify-center">
-          <h1 className="text-2xl md:text-3xl font-bold pr-2 text-center">
-            Your Connections
-          </h1>
-          <img
-            src={userIcon}
-            alt="User Icon"
-            className="w-6 h-6 md:w-8 md:h-8"
-          />
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex">
+            <h1 className="text-2xl md:text-3xl font-bold pr-2 text-center">
+              Your Connections
+            </h1>
+
+            <img
+              src={userIcon}
+              alt="User Icon"
+              className="w-6 h-6 md:w-8 md:h-8"
+            />
+          </div>
+          {user && <p>Logged in as {user}</p>}
         </div>
 
         {error && <p className="text-red-500 text-center">{error}</p>}

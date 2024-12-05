@@ -221,12 +221,20 @@ def connections_view(request):
     try:
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT u.userID, u.first, u.last
+                SELECT c.user1, u.first, u.last
                 FROM Connection c
-                INNER JOIN User u ON c.user2 = u.userID
-                WHERE c.user1 = %s
+                INNER JOIN User u ON c.user1 = u.userID
+                WHERE c.user2 = %s
             """, [user1])
             rows = cursor.fetchall()
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT u.first, u.last
+                FROM User u
+                WHERE u.userID = %s
+            """, [user1])
+            user = cursor.fetchone()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
@@ -235,7 +243,7 @@ def connections_view(request):
         for row in rows
     ]
 
-    return JsonResponse({"connections": connected_users}, status=200)
+    return JsonResponse({"connections": connected_users, "user": user[0] + " " + user[1]}, status=200)
 
 class AlumniView(APIView):
     @method_decorator(auth_middleware(required_permission_level='alumni'))
