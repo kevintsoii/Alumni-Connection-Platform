@@ -2,10 +2,6 @@
 
 CS 157A Final Project
 
-Project Report: [ProjectReport.md](https://github.com/kevintsoii/Alumni-Connection-Platform/blob/main/ProjectReport.md)
-
-Meeting Minutes: [meetingMinutes.md](https://github.com/kevintsoii/Alumni-Connection-Platform/blob/main/meetingMinutes.md)
-
 ## Set Up
 
 1. Install prerequisites
@@ -31,7 +27,7 @@ Meeting Minutes: [meetingMinutes.md](https://github.com/kevintsoii/Alumni-Connec
    Password: password
    ```
 
-4. Run custom SQL in CMD line (initial data is automatically added when you run Docker)
+4. Optionally run custom SQL in CMD line (initial data is automatically added when you run Docker)
 
    ```
    docker exec -it mysql mysql -u root -ppassword

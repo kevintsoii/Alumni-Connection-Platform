@@ -275,13 +275,38 @@ class AlumniView(APIView):
     
     @method_decorator(auth_middleware())
     def get(self, request):
+        grad_year = request.GET.get('gradYear', '').strip()
+        major = request.GET.get('major', '').strip()
+        company = request.GET.get('company', '').strip()
+        industry = request.GET.get('industry', '').strip()
+
         try:
+            query = """
+                SELECT u.userID, u.first, u.last, u.major, u.degree, u.gradYear, a.company, a.industry
+                FROM AlumniWall a
+                INNER JOIN User u ON a.user = u.userID
+            """
+            conditions = []
+            params = []
+
+            if grad_year:
+                conditions.append("u.gradYear = %s")
+                params.append(grad_year)
+            if major:
+                conditions.append("LOWER(u.major) LIKE LOWER(%s)")
+                params.append(f"%{major}%")
+            if company:
+                conditions.append("LOWER(a.company) LIKE LOWER(%s)")
+                params.append(f"%{company}%")
+            if industry:
+                conditions.append("LOWER(a.industry) LIKE LOWER(%s)")
+                params.append(f"%{industry}%")
+
+            if conditions:
+                query += " WHERE " + " AND ".join(conditions)
+
             with connection.cursor() as cursor:
-                cursor.execute("""
-                    SELECT u.userID, u.first, u.last, u.major, u.degree, u.gradYear, a.company, a.industry
-                    FROM AlumniWall a
-                    INNER JOIN User u ON a.user = u.userID
-                """)
+                cursor.execute(query, params)
                 rows = cursor.fetchall()
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
@@ -609,13 +634,21 @@ class JobView(APIView):
 
     @method_decorator(auth_middleware())
     def get(self, request):
+        search_query = request.GET.get('searchQuery')
+        
         try:
             with connection.cursor() as cursor:
-                cursor.execute("""
-                    SELECT j.jobID, j.title, j.URL, j.description, u.userID, u.first, u.last
-                    FROM JobPosting j
-                    INNER JOIN User u ON j.creator = u.userID
-                """)
+                if search_query:
+                    cursor.execute("""
+                        SELECT j.jobID, j.title, j.URL, j.description
+                        FROM JobPosting j
+                        WHERE LOWER(j.title) LIKE LOWER(%s)
+                    """, [f"%{search_query}%"])
+                else:
+                    cursor.execute("""
+                        SELECT j.jobID, j.title, j.URL, j.description
+                        FROM JobPosting j
+                    """)
                 rows = cursor.fetchall()
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
@@ -626,16 +659,12 @@ class JobView(APIView):
                 "title": row[1],
                 "URL": row[2],
                 "description": row[3],
-                "creator": {
-                    "userID": row[4],
-                    "first": row[5],
-                    "last": row[6]
-                }
             }
             for row in rows
         ]
 
-        return JsonResponse({"jobs": jobs}, status=200)
+        return JsonResponse({"jobs": jobs, 
+                "query": search_query}, status=200)
 
 class DonationView(APIView):
     @method_decorator(auth_middleware())

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function JobsPage() {
   const token = localStorage.getItem("token");
@@ -15,33 +15,35 @@ function JobsPage() {
   const [error, setError] = useState("");
   const [wallError, setWallError] = useState("");
 
-  const filteredJobs = jobs.filter((job) =>
-    job.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/jobs/", {
+  const fetchJobs = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/jobs/?searchQuery=${encodeURIComponent(
+          searchQuery
+        )}`,
+        {
           method: "GET",
           headers: { Authorization: `${token}` },
-        });
-
-        const data = await response.json();
-
-        console.log(data);
-        if (data.error) {
-          setWallError(data.error);
-          if (data.error === "Invalid token") {
-            setWallError("You must be logged in.");
-          }
-        } else {
-          setJobs(data.jobs);
         }
-      } catch (error) {
-        console.error("Error fetching jobs data:", error);
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+      if (data.error) {
+        setWallError(data.error);
+        if (data.error === "Invalid token") {
+          setWallError("You must be logged in.");
+        }
+      } else {
+        setJobs(data.jobs);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching jobs data:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchJobs();
   }, []);
 
@@ -123,21 +125,29 @@ function JobsPage() {
 
         {renderNewJobForm()}
 
-        <div className="bg-[#fbfbf9] rounded-lg shadow-md p-4">
+        <div className="flex bg-[#fbfbf9] rounded-lg shadow-md p-4">
           <input
             type="text"
             placeholder="Search by Job Title"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
             className="w-full bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <button
+            className="mx-3 px-2 bg-blue-300 rounded-xl"
+            onClick={() => fetchJobs()}
+          >
+            Search
+          </button>
         </div>
 
         {wallError && (
           <p className="text-red-500 text-center my-4">{wallError}</p>
         )}
 
-        {filteredJobs.map((job) => (
+        {jobs.map((job) => (
           <div
             key={job.jobID}
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"

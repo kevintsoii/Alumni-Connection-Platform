@@ -46,7 +46,7 @@ const SignupPage = () => {
       gradYear,
     } = formData;
 
-    if (!email || !password || !firstName || !lastName || !major || !gradYear) {
+    if (!email || !password || !firstName || !lastName || !gradYear) {
       setError("Please fill in all the required fields.");
       return;
     }
@@ -99,14 +99,10 @@ const SignupPage = () => {
   };
 
   // Generate graduation years dynamically
-  const gradYears =
-    formData.userType === "Student"
-      ? Array.from({ length: 10 }, (_, index) =>
-          (currentYear + index).toString()
-        )
-      : Array.from({ length: currentYear - 1900 + 1 }, (_, index) =>
-          (1900 + index).toString()
-        );
+  const gradYears = Array.from(
+    { length: 2030 - 1980 + 1 },
+    (_, index) => 1980 + index
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -201,7 +197,6 @@ const SignupPage = () => {
                 placeholder="Enter your major"
                 value={formData.major}
                 onChange={handleChange}
-                required
               />
             </div>
 
