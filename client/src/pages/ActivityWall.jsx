@@ -1,18 +1,16 @@
 // import profilePic from "/profilepic.png";
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function ActivityWall() {
   const token = localStorage.getItem("token");
   const userType = localStorage.getItem("permission_level");
 
   const [searchQuery, setSearchQuery] = useState("");
-  // const [newPostContent, setNewPostContent] = useState("");
 
   const [error, setError] = useState("");
   const [wallError, setWallError] = useState("");
 
   const [posts, setPosts] = useState([]);
-
 
   const [newPost, setNewPost] = useState({
     title: "",
@@ -21,10 +19,15 @@ function ActivityWall() {
 
   const fetchPosts = async () => {
     try {
-        const response = await fetch("http://localhost:8000/posts/", {
+      const response = await fetch(
+        `http://localhost:8000/posts/?searchQuery=${encodeURIComponent(
+          searchQuery
+        )}`,
+        {
           method: "GET",
           headers: { Authorization: `${token}` },
-        });
+        }
+      );
 
       const data = await response.json();
 
@@ -47,10 +50,7 @@ function ActivityWall() {
   }, []);
 
   const handleCreatePost = async () => {
-    if (
-      newPost.title.trim() !== "" && 
-      newPost.text.trim() !== ""
-    ) {
+    if (newPost.title.trim() !== "" && newPost.text.trim() !== "") {
       try {
         const response = await fetch("http://localhost:8000/posts/", {
           method: "POST",
@@ -75,27 +75,6 @@ function ActivityWall() {
       setError("All fields must be filled out!");
     }
   };
-
-
-  // const filteredActivities = activities.filter((activity) =>
-  //   activity.content.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
-
-  // const handleLike = (id) => {
-  //   setActivities((prevActivities) =>
-  //     prevActivities.map((activity) =>
-  //       activity.id === id
-  //         ? {
-  //             ...activity,
-  //             likes: activity.likedByUser
-  //               ? activity.likes - 1
-  //               : activity.likes + 1,
-  //             likedByUser: !activity.likedByUser,
-  //           }
-  //         : activity
-  //     )
-  //   );
-  // };
 
   // const handleAddComment = (id, comment) => {
   //   if (comment) {
@@ -127,7 +106,7 @@ function ActivityWall() {
             onChange={(e) => setNewPost({ ...newPost, text: e.target.value })}
             className="flex-grow bg-gray-100 rounded-full py-2 px-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          
+
           <button
             onClick={handleCreatePost}
             className="w-full bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-600"

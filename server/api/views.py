@@ -391,23 +391,43 @@ class PostView(APIView):
     
     @method_decorator(auth_middleware())
     def get(self, request):
+        search_query = request.GET.get('searchQuery')
+
         try:
             with connection.cursor() as cursor:
-                cursor.execute("""
-                    SELECT p.postID, p.title, p.text, u.first, u.last,
-                        (
-                            SELECT COUNT(*) 
-                            FROM `Like` l 
-                            WHERE l.post = p.postID
-                        ) AS likes,
-                        GROUP_CONCAT(m.URL) AS media_urls,
-                        GROUP_CONCAT(m.type) AS media_types
-                    FROM Post p
-                    INNER JOIN User u ON p.user = u.userID
-                    LEFT JOIN Media m ON p.postID = m.post
-                    GROUP BY p.postID
-                """)
-                rows = cursor.fetchall()
+                if not search_query:
+                    cursor.execute("""
+                        SELECT p.postID, p.title, p.text, u.first, u.last,
+                            (
+                                SELECT COUNT(*) 
+                                FROM `Like` l 
+                                WHERE l.post = p.postID
+                            ) AS likes,
+                            GROUP_CONCAT(m.URL) AS media_urls,
+                            GROUP_CONCAT(m.type) AS media_types
+                        FROM Post p
+                        INNER JOIN User u ON p.user = u.userID
+                        LEFT JOIN Media m ON p.postID = m.post
+                        GROUP BY p.postID
+                    """)
+                    rows = cursor.fetchall()
+                else:
+                    cursor.execute("""
+                        SELECT p.postID, p.title, p.text, u.first, u.last,
+                            (
+                                SELECT COUNT(*) 
+                                FROM `Like` l 
+                                WHERE l.post = p.postID
+                            ) AS likes,
+                            GROUP_CONCAT(m.URL) AS media_urls,
+                            GROUP_CONCAT(m.type) AS media_types
+                        FROM Post p
+                        INNER JOIN User u ON p.user = u.userID
+                        LEFT JOIN Media m ON p.postID = m.post
+                        WHERE LOWER(p.title) LIKE LOWER(%s)
+                        GROUP BY p.postID
+                    """, [f"%{search_query}%"])
+                    rows = cursor.fetchall()
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
