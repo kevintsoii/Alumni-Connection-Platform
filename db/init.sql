@@ -190,8 +190,8 @@ BEGIN
 
     IF (SELECT COUNT(*) FROM Post) = 0 THEN
         INSERT INTO Post (user, title, text) VALUES
-        (2, 'My First Post', 'This is my first post!'),
-        (1, 'Hello World', 'Excited to join this platform!'),
+        (2, 'My First Post', 'Check out this cool image!'),
+        (1, 'Hello World', 'I just finished this Python tutorial!'),
         (6, 'Party', 'Anyone want to attend a party this weekend?!'),
         (3, 'Dance', 'I am going to my favorite dance hall this weekend!'),
         (3, 'Job', 'Who else is trying to find a job?'),
@@ -204,16 +204,33 @@ BEGIN
 
     IF (SELECT COUNT(*) FROM Media) = 0 THEN
         INSERT INTO Media (post, URL, type) VALUES
-        (1, 'https://example.com/image1.jpg', 'photo'),
-        (2, 'https://example.com/video1.mp4', 'video'),
-        (5, 'https://example.com/gif1.mp4', 'url'),
-        (7, 'https://example.com/image7.mp4', 'photo'),
-        (7, 'https://example.com/video7.mp4', 'video'),
-        (8, 'https://example.com/video8.mp4', 'video'),
-        (10, 'https://example.com/image10.jpg', 'photo');
+        (1, 'https://picsum.photos/seed/picsum/600', 'photo'),
+        (2, 'https://www.youtube.com/watch?v=_uQrJ0TkZlc&vl=en', 'video'),
+        (5, 'https://leetcode.com/', 'url'),
+        (7, 'https://picsum.photos/seed/abc/600', 'photo'),
+        (7, 'https://www.youtube.com/watch?v=0IAPZzGSbME', 'video'),
+        (8, 'https://www.youtube.com/watch?v=KLlXCFG5TnA', 'video'),
+        (10, 'https://picsum.photos/seed/def/600', 'photo');
     END IF;
 
-    IF (SELECT COUNT(*) FROM `Like`) = 0 THEN
+    IF (SELECT COUNT(*) FROM Comment) = 0 THEN
+        INSERT INTO Comment (user, post, comment) VALUES
+        (1, 1, 'Wow thats cool.'),
+        (2, 2, 'I will use this too!!'),
+        (1, 4, 'I want to.'),
+        (2, 4, 'Cant come...'),
+        (10, 5, 'I am!'),
+        (3, 6, 'Add me'),
+        (6, 6, 'My username is explosion!'),
+        (8, 6, 'Lets play!'),
+        (1, 7, 'Congrats'),
+        (5, 7, 'Niceeeee!'),
+        (9, 7, 'Good job!'),
+        (12, 8, 'Any feedback is appreciated!'),
+        (1, 10, 'Hello again!');
+    END IF;
+
+        IF (SELECT COUNT(*) FROM `Like`) = 0 THEN
         INSERT INTO `Like` (user, post) VALUES
         (1, 1),
         (2, 1),
@@ -231,23 +248,6 @@ BEGIN
         (4, 4),
         (6, 5),
         (7, 6);
-    END IF;
-
-    IF (SELECT COUNT(*) FROM Comment) = 0 THEN
-        INSERT INTO Comment (user, post, comment) VALUES
-        (1, 1, 'Welcome to the platform!'),
-        (2, 2, 'Nice to see you here!'),
-        (1, 4, 'I want to.'),
-        (2, 4, 'Cant come...'),
-        (10, 5, 'I am!'),
-        (3, 6, 'Add me'),
-        (6, 6, 'My username is explosion!'),
-        (8, 6, 'Lets play!'),
-        (1, 7, 'Congrats'),
-        (5, 7, 'Niceeeee!'),
-        (9, 7, 'Good job!'),
-        (12, 8, 'Any feedback is appreciated!'),
-        (1, 10, 'Hello again!');
     END IF;
 
     IF (SELECT COUNT(*) FROM Fundraiser) = 0 THEN
@@ -291,8 +291,8 @@ BEGIN
 
     IF (SELECT COUNT(*) FROM JobPosting) = 0 THEN
         INSERT INTO JobPosting (creator, URL, description, title) VALUES
-        (11, 'https://example.com/job1', 'Looking for a software engineer intern for summer 2025.', 'Software Engineer Intern'),
-        (12, 'https://example.com/job2', 'Marketing manager position available.', 'Marketing Manager');
+        (11, 'https://jobs.cisco.com/jobs/ProjectDetail/Software-Engineer-I-Intern-United-States/1427387', 'Looking for a software engineer intern for summer 2025.', 'Software Engineer Intern'),
+        (12, 'https://wellfound.com/jobs/3138923-growth-marketing-manager', 'Marketing manager position available.', 'Marketing Manager');
     END IF;
 
     COMMIT;
