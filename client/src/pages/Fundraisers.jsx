@@ -243,10 +243,11 @@ function FundraisersPage() {
             className="bg-[#fbfbf9] rounded-lg shadow-md p-4 mt-4"
           >
             <h3 className="font-semibold text-xl">{fundraiser.name}</h3>
-            <p className="text-gray-500 mt-2">
+            <p className="text-amber-600 mt-2 font-semibold">
               Goal: ${parseFloat(fundraiser.goal).toFixed(2)}
             </p>
-            <p className="text-gray-500">{fundraiser.description}</p>
+            <p className="text-green-700 font-semibold">Total Raised: ${fundraiser.raised}</p>
+            <p className="text-gray-500">Description: {fundraiser.description}</p>
             <p className="text-gray-500">Ends: {fundraiser.ends}</p>
 
             {donationsByFundraiser[fundraiser.fundraiserID]?.length > 0 ? (

@@ -149,7 +149,7 @@ BEGIN
         ('alumni5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Casey', 'Lee', 'Civil Engineering', 'MS', 5, 2020, 'alumni', NULL, NULL),
 
         ('staff1@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Lebron', 'Green', 'Biology', 'PhD', 6, 1997, 'staff', 'Science', 'Professor'),
-        ('staff2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Mary', 'Jonhson', 'Civil Engineering', 'PhD', 6, 2004, 'staff', 'Engineering', 'Researcher'),
+        ('staff2@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Mary', 'Johnson', 'Civil Engineering', 'PhD', 6, 2004, 'staff', 'Engineering', 'Researcher'),
         ('staff3@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'David', 'Hall', 'Chemistry', 'BS', 6, 2005, 'staff', 'Humanities', 'Administrator'),
         ('staff4@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Riley', 'Adams', 'Physics', 'BS', 5, 1999, 'staff', 'Mathematics', 'Administrator'),
         ('staff5@sjsu.edu', '$2y$10$pNq5F5ZRyWwk6Ecb9lIYEuQrJ/7Co.mOYfQEzNXzC6nviSfkVpZdm', 'Emma', 'Walker', 'Biology', 'PhD', 5, 2005, 'staff', 'Science', 'Lab Assistant');
