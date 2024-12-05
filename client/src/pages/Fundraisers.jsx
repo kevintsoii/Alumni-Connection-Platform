@@ -12,6 +12,7 @@ function FundraisersPage() {
     ends: "",
   });
   const [donationAmount, setDonationAmount] = useState({});
+  const [donationsByFundraiser, setDonationsByFundraiser] = useState({});
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [accessError, setAccesError] = useState("");
@@ -41,6 +42,44 @@ function FundraisersPage() {
 
     fetchFundraisers();
   }, []);
+
+  // fetch donations for a specific fundraiser
+  const fetchDonations = async (fundraiserID) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/donations/${fundraiserID}`,
+        {
+          method: "GET",
+          headers: { Authorization: `${token}` },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`Donations for fundraiser ${fundraiserID}:`, data.donations); // Debugging
+        setDonationsByFundraiser((prev) => ({
+          ...prev,
+          [fundraiserID]: data.donations,
+        }));
+      } else {
+        console.error(
+          `Failed to fetch donations for fundraiser ${fundraiserID}. Status: ${response.status}`
+        );
+      }
+    } catch (error) {
+      console.error(
+        `Error fetching donations for fundraiser ${fundraiserID}:`,
+        error
+      );
+    }
+  };
+
+  // fetch donations for all fundraisers
+  useEffect(() => {
+    fundraisers.forEach((fundraiser) => {
+      fetchDonations(fundraiser.fundraiserID);
+    });
+  }, [fundraisers]);
 
   // create new fundraiser
   const handleCreateFundraiser = async () => {
@@ -83,27 +122,8 @@ function FundraisersPage() {
       setError("All fields are required.");
     }
   };
-  
 
-  const handleDonate = (id) => {
-    if (donationAmount[id] && parseFloat(donationAmount[id]) > 0) {
-      setFundraisers((prevFundraisers) =>
-        prevFundraisers.map((fundraiser) =>
-          fundraiser.id === id
-            ? {
-                ...fundraiser,
-                donations: [
-                  ...fundraiser.donations,
-                  { user: "Anonymous", amount: parseFloat(donationAmount[id]) },
-                ],
-              }
-            : fundraiser
-        )
-      );
-      setDonationAmount((prev) => ({ ...prev, [id]: "" }));
-    }
-  };
-
+  // render form for creating a new fundraiser
   function renderNewFundraiserForm() {
     if (userType === "staff") {
       return (
@@ -158,6 +178,14 @@ function FundraisersPage() {
     }
   }
 
+  // handle donation submission
+  const handleDonate = (fundraiserID) => {
+    if (donationAmount[fundraiserID] && parseFloat(donationAmount[fundraiserID]) > 0) {
+      setDonationAmount((prev) => ({ ...prev, [fundraiserID]: "" }));
+      // TODO: connect it to donations POST api
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="bg-white rounded-lg shadow-md p-6">
@@ -178,40 +206,41 @@ function FundraisersPage() {
             </p>
             <p className="text-gray-500">{fundraiser.description}</p>
             <p className="text-gray-500">Ends: {fundraiser.ends}</p>
+
+            {donationsByFundraiser[fundraiser.fundraiserID]?.length > 0 ? (
+              <div className="mt-4">
+                <h4 className="font-semibold">Donations:</h4>
+                {donationsByFundraiser[fundraiser.fundraiserID].map((donation) => (
+                  <p key={donation.donationID} className="text-gray-500">
+                    {donation.user.first} {donation.user.last}: $
+                    {parseFloat(donation.amount).toFixed(2)}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 mt-2">No donations yet.</p>
+            )}
+
             <div className="mt-4">
               <input
                 type="text"
                 placeholder="Donation Amount"
-                value={donationAmount[fundraiser.id] || ""}
+                value={donationAmount[fundraiser.fundraiserID] || ""}
                 onChange={(e) =>
                   setDonationAmount({
                     ...donationAmount,
-                    [fundraiser.id]: e.target.value,
+                    [fundraiser.fundraiserID]: e.target.value,
                   })
                 }
                 className="bg-gray-100 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
-                onClick={() => handleDonate(fundraiser.id)}
+                onClick={() => handleDonate(fundraiser.fundraiserID)}
                 className="bg-green-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-green-600"
               >
                 Donate
               </button>
             </div>
-            {/* FIX THIS SO THAT PEOPLE CAN DONATE */}
-            {/* {fundraiser.donations.length > 0 && (
-              <div className="mt-4">
-                <h4 className="font-semibold">Top Donations:</h4>
-                {fundraiser.donations
-                  .sort((a, b) => b.amount - a.amount)
-                  .slice(0, 5)
-                  .map((donation, index) => (
-                    <p key={index} className="text-gray-500">
-                      {donation.user}: ${donation.amount.toFixed(2)}
-                    </p>
-                  ))}
-              </div>
-            )} */}
           </div>
         ))}
       </div>
