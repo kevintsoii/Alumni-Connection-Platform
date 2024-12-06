@@ -15,6 +15,8 @@ CS 157A Final Project
    ```
 
    - When the build finishes, it should say `django-1  | Watching for file changes with StatReloader`
+  
+   - In the rare case of an error, try re-running the command or running #6 to clean up before re-running
 
 3. Visit the website at http://localhost:5173/
 
@@ -24,7 +26,7 @@ CS 157A Final Project
    student1@sjsu.edu
    alumni1@sjsu.edu
    staff1@sjsu.edu
-   Password: password
+   Password for all: password
    ```
 
 4. Optionally run custom SQL in CMD line (initial data is automatically added when you run Docker)
