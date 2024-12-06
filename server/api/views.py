@@ -643,7 +643,7 @@ class SocialEventView(APIView):
         return JsonResponse({"events": events}, status=200)
 
 class JobView(APIView):
-    @method_decorator(auth_middleware(required_permission_level='staff'))
+    @method_decorator(auth_middleware(required_permission_level='alumni'))
     def post(self, request):
         data = json.loads(request.body)
         title = data.get("title")

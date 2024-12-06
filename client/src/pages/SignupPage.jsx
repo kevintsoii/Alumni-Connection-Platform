@@ -87,7 +87,7 @@ const SignupPage = () => {
   };
 
   if (signUp) {
-    return <Navigate to="/alumni" />;
+    return <Navigate to="/q" />;
   }
 
   const handleChange = (e) => {
